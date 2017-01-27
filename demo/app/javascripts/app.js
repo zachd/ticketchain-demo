@@ -94,7 +94,7 @@ function addMyTicket(ticketId, ticketDetails) {
 function openPrintTicketWindow(ticketId) {
   console.log('openPrintTicketWindow: Entering');
 
-  window.open('printTicket.html?id=' + ticketId);
+  window.open('print?id=' + ticketId);
   return false;
 }
 
