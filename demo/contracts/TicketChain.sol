@@ -22,14 +22,14 @@ contract TicketChain {
         uint event_id;
         uint price;
         bool on_market;
-    } 
+    }
 
     uint num_events = 0;
     uint num_tickets = 0;
 
-    mapping(address => User) public users;
-    mapping(uint => Event) public events;
-    mapping(uint => Ticket) public tickets;
+    mapping(address => User) users;
+    mapping(uint => Event) events;
+    mapping(uint => Ticket) tickets;
 
     function TicketChain() {
     }
@@ -41,17 +41,17 @@ contract TicketChain {
 
     function newEvent(string name, uint price, uint num_tickets) {
     	if(bytes(name).length == 0) throw;
-        num_events += 1;
         events[num_events].owner = msg.sender;
         events[num_events].name = name;
         events[num_events].price = price;
         events[num_events].active = true;
         events[num_events].num_tickets = num_tickets;
+        num_events += 1;
     }
 
     function newTicket(address owner, uint event_id, uint price) returns(uint){
-        num_tickets += 1;
         tickets[num_tickets] = Ticket({owner: owner, event_id: event_id, price: price, on_market: false});
+        num_tickets += 1;
         return num_tickets;
     }
 

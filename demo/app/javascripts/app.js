@@ -35,7 +35,7 @@ function refreshEvents() {
   events = [];
   $("#availableEvents tbody").empty();
   ticketChain.getNumEvents.call().then(function(count) {
-    for (var i = 1; i <= count; i++)
+    for (var i = 0; i < count; i++)
       fetchEvent(i, count);
     return true;
   }).catch(function(e) {
@@ -237,7 +237,7 @@ function setStatus(message) {
 
 // Choose random ID
 function getRandomId() {
-  var num = Math.floor(Math.random() * 100) + 2;
+  var num = Math.floor(Math.random() * 499) + 2;
   localStorage.setItem('account', num);
   return num;
 }
