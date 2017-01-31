@@ -1,7 +1,7 @@
 module.exports = {
   build: {
     "index.html": "index.html",
-    "print/index.html": "print/index.html",
+    "ticket/index.html": "ticket/index.html",
     "app.js": [
       "javascripts/jquery-1.12.4.min.js",
       "javascripts/sweetalert.min.js",

@@ -122,6 +122,7 @@ contract TicketChain {
         removeFromEvent(ticket.event_id, ticket_id);
 
         // Set ticket to off market
+        ticket.price = evnt.price;
         ticket.on_market = false;
         return true;
     }
@@ -144,10 +145,8 @@ contract TicketChain {
     		if(evnt.market_ticket_ids[i] == ticket_id){
     			if(i < evnt.market_ticket_ids.length - 1){
     				evnt.market_ticket_ids[i] = evnt.market_ticket_ids[evnt.market_ticket_ids.length - 1];
-    				delete evnt.market_ticket_ids[evnt.market_ticket_ids.length - 1];
-    			} else {
-    				delete evnt.market_ticket_ids[i];
     			}
+    			evnt.market_ticket_ids.length--;
     		}
     	}
     }
@@ -158,10 +157,8 @@ contract TicketChain {
     		if(owner.ticket_ids[i] == ticket_id){
     			if(i < owner.ticket_ids.length - 1){
     				owner.ticket_ids[i] = owner.ticket_ids[owner.ticket_ids.length - 1];
-    				delete owner.ticket_ids[owner.ticket_ids.length - 1];
-    			} else {
-    				delete owner.ticket_ids[i];
     			}
+    			owner.ticket_ids.length--;
     		}
     	}
     }

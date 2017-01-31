@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TicketChain</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link href="./app.css" rel='stylesheet' type="text/css">
+  <script type="text/javascript">
+
+    // Get parameter from URL
+    function getUrlParameter(input) {
+      var vars = decodeURIComponent(window.location.search.substring(1)).split('&'),
+        param;
+      for (var i = 0; i < vars.length; i++) {
+        param = vars[i].split('=');
+        if (param[0] === input)
+          return param[1] === undefined ? true : param[1];
+      }
+    }
+
+    window.onload = function() {
+      var ticket_id = getUrlParameter('id');
+      document.title = "Ticket #" + ticket_id;
+      document.getElementById("qrcode").src = "http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=" + ticket_id;
+    }
+  </script>
+</head>
+<body>
+  <div class="container-fluid">
+    <div id="code-container">
+        <img id="qrcode">
+    </div>
+</div>
+</body>
+</html>

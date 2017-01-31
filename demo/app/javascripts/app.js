@@ -1,62 +1,110 @@
 var accounts;
 var account;
 var tickets;
+var events;
 var ticketChain;
 
 
-// Refresh user
-function refreshUser() {
-  $("#yourName").empty();
+/**** REFRESH FUNCTIONS ****/
 
+// Refresh user
+function refreshUserTickets() {
+  tickets = [];
+  $("#yourName").empty();
   ticketChain.getUser.call({
     from: account
   }).then(function(resp) {
     $("#yourName").html(resp[0]);
     tickets = resp[1];
+    refreshMyTickets();
+    return true;
   }).catch(function(e) {
-    error(e)
+    error(e);
   });
 }
 
-// Refresh tickets
-function refreshTickets() {
+// Refresh user tickets
+function refreshMyTickets() {
   $("#myTickets tbody").empty();
-
-  ticketChain.getUserTickets.call().then(function(tickets) {}).catch(function(e) {
-    error(e)
-  });
+  for (var i = 0; i < tickets.length; i++)
+    fetchTicket(tickets[i].valueOf(), '#myTickets');
 }
 
 // Refresh events
 function refreshEvents() {
+  events = [];
   $("#availableEvents tbody").empty();
-
   ticketChain.getNumEvents.call().then(function(count) {
     for (var i = 1; i <= count; i++)
-      fetchEvent(i);
+      fetchEvent(i, count);
     return true;
   }).catch(function(e) {
-    error(e)
+    error(e);
+  });
+}
+
+// Refresh market listing
+function refreshMarket() {
+  $("#market tbody").empty();
+  for (var i = 0; i < events.length; i++)
+    refreshEventTickets(events[i], '#market');
+}
+
+// Refresh event tickets
+function refreshEventTickets(event, elem) {
+  for (var i = 0; i < event.data[5].length; i++)
+    fetchTicket(event.data[5][i].valueOf(), elem);
+}
+
+
+/**** FETCH FUNCTIONS ****/
+
+// Fetch ticket
+function fetchTicket(ticket_id, elem, actions) {
+  ticketChain.getTicket.call(ticket_id).then(function(ticket) {
+    var buttons = "";
+
+    // Check if on market
+    if (ticket[3]) {
+      buttons = '<button class="btn" onclick="cancelSale(' + ticket_id + ')">Cancel Sale</button>';
+    } else {
+      // Show appropriate buttons
+      if (elem == "#market")
+        buttons = '<button class="btn" onclick="buyTicket(' + ticket[1].valueOf() + ', ' + ticket_id + ', true)">Buy Ticket</button>';
+      else if (elem == "#myTickets")
+        buttons = '<button class="btn" onclick="sellTicket(' + ticket_id + ')">Sell Ticket</button>' +
+        '<button class="btn" onclick="openPrint(' + ticket_id + ')">View Code</button>';
+    }
+    // Add to table
+    tableAdd(elem, ticket_id, [ticket_id, ticket[0], ticket[1].valueOf(), ticket[2].valueOf(), buttons]);
+    return true;
+  }).catch(function(e) {
+    error(e);
   });
 }
 
 // Fetch event
-function fetchEvent(event_id) {
-  ticketChain.getEvent.call(event_id).then(function(value) {
-    var tr = $('<tr>').attr('id', event_id);
-    $("#availableEvents").append(tr);
-    tr.append($('<td>').html(event_id));
-    tr.append($('<td>').html(value[0]));
-    tr.append($('<td>').html(value[1]));
-    tr.append($('<td>').html(value[2].valueOf()));
-    tr.append($('<td>').html(value[3].valueOf()));
-    tr.append($('<td>').html(value[4].valueOf()));
-    tr.append($('<td>').html('<button class="btn" onclick="buyTicket(' + event_id + ',' +
-      parseInt(value[2].valueOf()) + ')">Buy Ticket</button>'));
+function fetchEvent(event_id, total) {
+  ticketChain.getEvent.call(event_id).then(function(item) {
+    tableAdd('#availableEvents', event_id, [event_id, item[0], item[1],
+      item[2].valueOf(), item[3].valueOf(), item[4].valueOf(),
+      '<button class="btn" onclick="buyTicket(' + event_id + ',' +
+      parseInt(item[2].valueOf()) + ')">Buy Ticket</button>'
+    ]);
+    events.push({
+      id: event_id,
+      data: item
+    });
+    if (event_id == total)
+      refreshMarket();
+    return true;
   }).catch(function(e) {
-    error(e)
+    error(e);
   });
 }
+
+
+/**** BUTTON FUNCTIONS ****/
 
 // Buy ticket
 function buyTicket(event_id, price, ticket_id) {
@@ -67,113 +115,56 @@ function buyTicket(event_id, price, ticket_id) {
     }],
     function(resp) {
       setStatus("Transaction complete!");
-      refreshUser();
       refreshEvents();
-      refreshTickets();
+      refreshUserTickets();
       return true;
     }
   );
-};
-
-// Fetch ticket
-function fetchTicket(id, count) {
-
-  ticketChain.getTicketDetails.call(id).then(function(value) {
-    var ticket = parseTicket(value);
-
-    // Check if ticket is owned/available
-    if (ticket.owner === account)
-      addMyTicket(id, ticket);
-    else if (ticket.forSale)
-      addAvailableTicket(id, ticket);
-
-    // Show no tickets text
-    if (id == count && $('#myTickets tbody > tr').length == 0)
-      $('#notickets').show();
-  }).catch(function(e) {
-    error(e)
-  });
-}
-
-function parseTicket(ticket) {
-  var resp = {};
-  resp.owner = ticket[0];
-  resp.price = ticket[1];
-  resp.forSale = ticket[2];
-  resp.description = ticket[3];
-  return resp;
-}
-
-function addMyTicket(ticketId, ticketDetails) {
-
-  var tr = $('<tr>').attr('id', ticketId);
-  $("#myTickets").append(tr);
-
-  tr.append($('<td>').html(ticketId));
-  tr.append($('<td>').html(ticketDetails.owner));
-  tr.append($('<td>').html(ticketDetails.description));
-  tr.append($('<td>').html(ticketDetails.price.valueOf()));
-  tr.append($('<td>').html('<button class="btn" onclick="openPrintTicketWindow(' + ticketId + ')">Print Ticket</button>'));
-
-  if (ticketDetails.forSale) {
-    tr.append($('<td>').html('<button class="btn" onclick="cancelTicket(' + ticketId + ')">Cancel Sale</button>'));
-  } else {
-    tr.append($('<td>').html('<button class="btn" onclick="sellTicket(' + ticketId + ')">Sell</button>'));
-  }
-}
-
-function openPrintTicketWindow(ticketId) {
-  window.open('print?id=' + ticketId);
-  return false;
-}
-
-function addAvailableTicket(ticketId, ticketDetails) {
-  var tr = $('<tr>').attr('id', ticketId);
-  $("#availableTickets").append(tr);
-  tr.append($('<td>').html(ticketId));
-  tr.append($('<td>').html(ticketDetails.owner));
-  tr.append($('<td>').html(ticketDetails.description));
-  tr.append($('<td>').html(ticketDetails.price.valueOf()));
-  tr.append($('<td>').html('<button class="btn" onclick="prepareBuy(' + ticketId + ',' +
-    (parseInt(ticketDetails.price.valueOf()) + 1) + ')">Buy it!</button>'));
 }
 
 // Sell ticket
-function sellTicket(id) {
+function sellTicket(ticket_id) {
   var price = prompt("Please enter a price");
-  ticketChain.sellTicket.sendTransaction(id, price, {
-    from: account
-  }).then(function() {
-    setStatus("Transaction complete!");
-    refreshTickets();
-  }).catch(function(e) {
-    error(e)
-  });
+  send(ticketChain.sellTicket, [ticket_id, price, {
+      from: account
+    }],
+    function() {
+      setStatus("Transaction complete!");
+      refreshEvents();
+      refreshUserTickets();
+      return true;
+    }
+  );
 }
 
 // Cancel ticket
-function cancelTicket(id) {
-  ticketChain.cancelTicketSale.sendTransaction(id, price, {
-    from: account
-  }).then(function() {
-    setStatus("cancel complete!");
-    refreshTickets();
-  }).catch(function(e) {
-    error(e)
-  });
+function cancelSale(ticket_id) {
+  send(ticketChain.cancelSale, [ticket_id, {
+      from: account
+    }],
+    function() {
+      setStatus("Transaction complete!");
+      refreshEvents();
+      refreshUserTickets();
+      return true;
+    }
+  );
 }
 
 // Validate ticket
-function validateTicket(ticketId, owner) {
-  ticketChain.validateTicket.call(ticketId, owner).then(function(is_valid) {
+function validateTicket(ticket_id, owner) {
+  ticketChain.validateTicket.call(ticket_id, owner).then(function(is_valid) {
     if (is_valid)
       swal("Success!", "You have a valid ticket.", "success");
     else
       swal("Oops!", "This ticket is invalid.", "error");
   }).catch(function(e) {
-    error(e)
+    error(e);
   });
 }
+
+
+/**** CREATE FUNCTIONS ****/
 
 // Create event
 function newEvent() {
@@ -192,26 +183,37 @@ function newEvent() {
   );
 };
 
+
+/**** HELPER FUNCTIONS ****/
+
 // Send transaction
 function send(endpoint, vars, callback) {
   setStatus("Initiating transaction... (please wait)");
   endpoint.estimateGas.apply(this, vars).then(function(gas) {
-    vars[vars.length - 1].gas = gas;
+    vars[vars.length - 1].gas = gas * 2;
     endpoint.apply(this, vars).then(function(val) {
       return callback(val);
     }).catch(function(e) {
-      error(e)
+      error(e);
     });
     return true;
   }).catch(function(e) {
-    error(e)
+    error(e);
   });
 }
 
-// Log error
-function error(e) {
-  console.log(e);
-  setStatus("An error occured; see log.");
+// Add item to table
+function tableAdd(elem, item_id, attrs) {
+  var tr = $('<tr>').attr('id', item_id);
+  $(elem).append(tr);
+  for (var attr of attrs)
+    tr.append($('<td>').html(attr));
+}
+
+// Open print screen
+function openPrint(ticket_id) {
+  window.open('ticket/?id=' + ticket_id);
+  return false;
 }
 
 // Get parameter from URL
@@ -238,6 +240,14 @@ function getRandomId() {
   return num;
 }
 
+// Log error
+function error(e) {
+  console.log(e);
+  setStatus("An error occured; see log.");
+}
+
+/**** MAIN WINDOW ONLOAD EVENT ****/
+
 window.onload = function() {
   web3.eth.getAccounts(function(err, accounts) {
     ticketChain = TicketChain.deployed();
@@ -262,7 +272,10 @@ window.onload = function() {
     if (getUrlParameter('function') == "validate")
       validateTicket(getUrlParameter('ticket'), account);
 
-    // Check if user exists
+    // Refresh events
+    refreshEvents();
+
+    // Check user exists and refresh users
     ticketChain.getUser.call({
       from: account
     }).then(function(resp) {
@@ -273,7 +286,7 @@ window.onload = function() {
           }],
           function(resp) {
             setStatus("Transaction complete!");
-            refreshUser();
+            refreshUserTickets();
             return true;
           }
         );
@@ -281,10 +294,12 @@ window.onload = function() {
         // Set user params
         $("#yourName").html(resp[0]);
         tickets = resp[1];
+        // Refresh users and tickets
+        refreshUserTickets();
       }
       return true;
     }).catch(function(e) {
-      error(e)
+      error(e);
     });
 
     // Set account params
@@ -292,8 +307,5 @@ window.onload = function() {
     document.getElementById("yourAddress").innerHTML = account;
     document.getElementById("yourBalance").innerHTML = web3.eth.getBalance(account);
 
-    // Refresh
-    refreshTickets();
-    refreshEvents();
   });
 }
