@@ -71,7 +71,8 @@ function fetchTicket(ticket_id, elem, actions) {
     } else {
       // Show appropriate buttons
       if (elem == "#market")
-        buttons = '<button class="btn" onclick="buyTicket(' + ticket[1].valueOf() + ', ' + ticket_id + ', true)">Buy Ticket</button>';
+        buttons = '<button class="btn" onclick="buyTicket(' + ticket[1].valueOf() + ', '
+        + parseInt(ticket[2].valueOf()) + ', ' +  ticket_id + ')">Buy Ticket</button>';
       else if (elem == "#myTickets")
         buttons = '<button class="btn" onclick="sellTicket(' + ticket_id + ')">Sell Ticket</button>' +
         '<button class="btn" onclick="openPrint(' + ticket_id + ')">View Code</button>';
@@ -109,8 +110,10 @@ function fetchEvent(event_id, total) {
 
 // Buy ticket
 function buyTicket(event_id, price, ticket_id) {
+  on_market = ticket_id !== undefined;
+  ticket_id = on_market ? ticket_id : 0;
   price += 1;
-  send(ticketChain.buyTicket, [event_id, 0, ticket_id !== undefined, {
+  send(ticketChain.buyTicket, [event_id, ticket_id, on_market, {
       from: account,
       value: price
     }],
