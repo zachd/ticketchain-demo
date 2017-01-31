@@ -71,8 +71,8 @@ function fetchTicket(ticket_id, elem, actions) {
     } else {
       // Show appropriate buttons
       if (elem == "#market")
-        buttons = '<button class="btn" onclick="buyTicket(' + ticket[1].valueOf() + ', '
-        + parseInt(ticket[2].valueOf()) + ', ' +  ticket_id + ')">Buy Ticket</button>';
+        buttons = '<button class="btn" onclick="buyTicket(' + ticket[1].valueOf() + ', ' +
+        parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Buy Ticket</button>';
       else if (elem == "#myTickets")
         buttons = '<button class="btn" onclick="sellTicket(' + ticket_id + ')">Sell Ticket</button>' +
         '<button class="btn" onclick="openPrint(' + ticket_id + ')">View Code</button>';
@@ -88,7 +88,7 @@ function fetchTicket(ticket_id, elem, actions) {
 // Fetch event
 function fetchEvent(event_id, total) {
   ticketChain.getEvent.call(event_id).then(function(item) {
-    tableAdd('#availableEvents', event_id, [item[1], item[2].valueOf(), item[3].valueOf(), 
+    tableAdd('#availableEvents', event_id, [item[1], item[2].valueOf(), item[3].valueOf(),
       item[4].valueOf(), '<button class="btn" onclick="buyTicket(' + event_id + ',' +
       parseInt(item[2].valueOf()) + ')">Buy Ticket</button>'
     ]);
@@ -185,7 +185,26 @@ function newEvent() {
       return true;
     }
   );
-};
+}
+
+// Create user
+function newUser(name) {
+  if (name === false) return false;
+  if (name === "") {
+    swal.showInputError("You need to write something!");
+    return false
+  }
+  swal("Hi " + name + "!", "Welcome to Ticketchain.");
+  send(ticketChain.newUser, [name, {
+      from: account
+    }],
+    function(resp) {
+      setStatus("Transaction complete!");
+      refreshUserTickets();
+      return true;
+    }
+  );
+}
 
 
 /**** HELPER FUNCTIONS ****/
@@ -209,8 +228,8 @@ function send(endpoint, vars, callback) {
 // Add item to table
 function tableAdd(elem, item_id, attrs) {
   var tr = $('<tr>').attr('id', item_id);
-  tr.addClass(elem == '#availableEvents' 
-    ? 'event' : 'ticket');
+  tr.addClass(elem == '#availableEvents' ?
+    'event' : 'ticket');
   $(elem).append(tr);
   for (var attr of attrs)
     tr.append($('<td>').html(attr));
@@ -291,32 +310,21 @@ window.onload = function() {
       from: account
     }).then(function(resp) {
       if (resp[0] == "") {
-        swal({
-          title: "Welcome!",
-          text: "Please enter your name below.",
-          type: "input",
-          showCancelButton: true,
-          closeOnConfirm: false,
-          animation: "slide-from-top"
-        },
-        function(input){
-          if (input === false) return false;
-          if (input === "") {
-            swal.showInputError("You need to write something!");
-            return false
-          }
-          // Create user
-          swal("Hi " + input + "!", "Welcome to Ticketchain.");
-          send(ticketChain.newUser, [input, {
-              from: account
-            }],
-            function(resp) {
-              setStatus("Transaction complete!");
-              refreshUserTickets();
-              return true;
+        if (isAdmin() === 1)
+          newUser("Admin");
+        else
+          swal({
+              title: "Welcome!",
+              text: "Please enter your name below.",
+              type: "input",
+              showCancelButton: true,
+              closeOnConfirm: false,
+              animation: "slide-from-top"
+            },
+            function(input) {
+              newUser(input);
             }
           );
-        });
       } else {
         // Set user params
         $("#yourName").html(resp[0]);

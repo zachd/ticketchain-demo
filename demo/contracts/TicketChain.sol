@@ -51,8 +51,7 @@ contract TicketChain {
 
     function newTicket(address owner, uint event_id, uint price) returns(uint){
         tickets[num_tickets] = Ticket({owner: owner, event_id: event_id, price: price, on_market: false});
-        num_tickets += 1;
-        return num_tickets;
+        return num_tickets++;
     }
 
     function buyTicket(uint event_id, uint ticket_id, bool on_market) payable returns(bool) {
@@ -81,7 +80,7 @@ contract TicketChain {
         	removeFromUser(owner_addr, ticket_id);
         	removeFromEvent(event_id, ticket_id);
         } else {
-        	ticket_id = newTicket(msg.sender, event_id, evnt.price);
+        	ticket_id = newTicket(msg.sender, event_id, price);
         	evnt.num_sold += 1;
         }
 
