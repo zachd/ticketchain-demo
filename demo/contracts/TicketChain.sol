@@ -26,18 +26,20 @@ contract TicketChain {
     uint num_events = 0;
     uint num_tickets = 0;
 
-    mapping(address => User) users;
-    mapping(uint => Event) events;
-    mapping(uint => Ticket) tickets;
+    mapping(address => User) public users;
+    mapping(uint => Event) public events;
+    mapping(uint => Ticket) public tickets;
 
     function TicketChain() {
     }
 
     function newUser(string name) {
+    	if(bytes(name).length == 0) throw;
         users[msg.sender].name = name;
     }
 
     function newEvent(string name, uint price, uint num_tickets) {
+    	if(bytes(name).length == 0) throw;
         num_events += 1;
         events[num_events].owner = msg.sender;
         events[num_events].name = name;
@@ -51,9 +53,12 @@ contract TicketChain {
         return num_tickets;
     }
 
-    function buyTicket(uint ticket_id, uint event_id, bool on_market) payable returns(bool) {
+    function buyTicket(uint event_id, uint ticket_id, bool on_market) payable returns(bool) {
     	User user = users[msg.sender];
+    	if(bytes(user.name).length == 0) throw;
+
     	Event evnt = events[event_id];
+    	if(bytes(evnt.name).length == 0) throw;
 		uint price = evnt.price;
 		address owner_addr = evnt.owner;
 
@@ -63,13 +68,11 @@ contract TicketChain {
         	price = tickets[ticket_id].price;
         	owner_addr = tickets[ticket_id].owner;
         } else {
-        	if(evnt.num_sold >= num_tickets) throw; // Sold out
+        	if(evnt.num_sold >= evnt.num_tickets) throw; // Sold out
         }
         if (msg.value <= price) throw; // Insufficient funds
 
-        // Send price of ticket to owner
         User owner = users[owner_addr];
-        bool x = owner_addr.send(price);
 
         // Remove from event/user
         if(on_market){
@@ -79,6 +82,9 @@ contract TicketChain {
         	ticket_id = newTicket(msg.sender, event_id, evnt.price);
         	evnt.num_sold += 1;
         }
+
+        // Send price of ticket to owner
+        bool x = owner_addr.send(price);
 
         // Set new owner of ticket
         tickets[ticket_id].owner = msg.sender;
@@ -124,6 +130,10 @@ contract TicketChain {
         return (tickets[_uid].owner == owner);
     }
 
+    function getUserTickets() returns(uint[] ticket_ids) {
+        return users[msg.sender].ticket_ids;
+    }
+
     function getNumEvents() returns(uint) {
         return num_events;
     }
@@ -156,7 +166,7 @@ contract TicketChain {
     	}
     }
 
-    function getUser() returns(address addr, string name, uint[] ticket_ids) {
+    function getUser() returns(string name, uint[] ticket_ids) {
         name = users[msg.sender].name;
         ticket_ids = users[msg.sender].ticket_ids;
     }

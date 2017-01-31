@@ -1,21 +1,81 @@
 var accounts;
 var account;
-var finished;
+var tickets;
 var ticketChain;
 
-// Refresh tickets
-function refreshTickets() {
-  $("#myTickets tbody").empty();
-  $("#availableTickets tbody").empty();
 
-  ticketChain.getTotalTicketCount.call().then(function(count) {
-    for (var i = 1; i <= count; i++)
-      fetchTicket(i, count);
+// Refresh user
+function refreshUser() {
+  $("#yourName").empty();
+
+  ticketChain.getUser.call({
+    from: account
+  }).then(function(resp) {
+    $("#yourName").html(resp[0]);
+    tickets = resp[1];
   }).catch(function(e) {
     error(e)
   });
 }
 
+// Refresh tickets
+function refreshTickets() {
+  $("#myTickets tbody").empty();
+
+  ticketChain.getUserTickets.call().then(function(tickets) {}).catch(function(e) {
+    error(e)
+  });
+}
+
+// Refresh events
+function refreshEvents() {
+  $("#availableEvents tbody").empty();
+
+  ticketChain.getNumEvents.call().then(function(count) {
+    for (var i = 1; i <= count; i++)
+      fetchEvent(i);
+    return true;
+  }).catch(function(e) {
+    error(e)
+  });
+}
+
+// Fetch event
+function fetchEvent(event_id) {
+  ticketChain.getEvent.call(event_id).then(function(value) {
+    var tr = $('<tr>').attr('id', event_id);
+    $("#availableEvents").append(tr);
+    tr.append($('<td>').html(event_id));
+    tr.append($('<td>').html(value[0]));
+    tr.append($('<td>').html(value[1]));
+    tr.append($('<td>').html(value[2].valueOf()));
+    tr.append($('<td>').html(value[3].valueOf()));
+    tr.append($('<td>').html(value[4].valueOf()));
+    tr.append($('<td>').html('<button class="btn" onclick="buyTicket(' + event_id + ',' +
+      parseInt(value[2].valueOf()) + ')">Buy Ticket</button>'));
+  }).catch(function(e) {
+    error(e)
+  });
+}
+
+// Buy ticket
+function buyTicket(event_id, price, ticket_id) {
+  price += 1;
+  send(ticketChain.buyTicket, [event_id, 0, ticket_id !== undefined, {
+      from: account,
+      value: price
+    }],
+    function(resp) {
+      setStatus("Transaction complete!");
+      refreshUser();
+      refreshEvents();
+      refreshTickets();
+      return true;
+    }
+  );
+};
+
+// Fetch ticket
 function fetchTicket(id, count) {
 
   ticketChain.getTicketDetails.call(id).then(function(value) {
@@ -42,15 +102,6 @@ function parseTicket(ticket) {
   resp.forSale = ticket[2];
   resp.description = ticket[3];
   return resp;
-}
-
-function prepareBuy(id, price) {
-  $('#buyTicketDiv').show();
-  $('#selectbuyTicketDiv').hide();
-  $('#ticketid').val(id);
-  $('#price').val(price);
-  $("#ticketid").fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
-  $('#price').fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
 }
 
 function addMyTicket(ticketId, ticketDetails) {
@@ -86,27 +137,6 @@ function addAvailableTicket(ticketId, ticketDetails) {
   tr.append($('<td>').html('<button class="btn" onclick="prepareBuy(' + ticketId + ',' +
     (parseInt(ticketDetails.price.valueOf()) + 1) + ')">Buy it!</button>'));
 }
-
-// Buy ticket
-function buyTicket() {
-  var price = parseInt(document.getElementById("price").value);
-  var ticketid = document.getElementById("ticketid").value;
-  setStatus("Initiating transaction... (please wait)");
-
-  ticketChain.buyTicket.sendTransaction(ticketid, {
-    from: account,
-    value: price
-  }).then(function() {
-    setStatus("Transaction complete!");
-    $('#notickets').hide();
-    $('#ticketid').val('');
-    $('#price').val('');
-    $('#buyTicketDiv').hide();
-    refreshTickets();
-  }).catch(function(e) {
-    error(e)
-  });
-};
 
 // Sell ticket
 function sellTicket(id) {
@@ -151,11 +181,15 @@ function newEvent() {
   var price = parseInt(document.getElementById("event_price").value);
   var num_tickets = parseInt(document.getElementById("event_num_tickets").value);
 
-  send(ticketChain.newEvent, [name, price, num_tickets, {from: account}],
+  send(ticketChain.newEvent, [name, price, num_tickets, {
+      from: account
+    }],
     function(resp) {
       setStatus("Transaction complete!");
+      refreshEvents();
       return true;
-    });
+    }
+  );
 };
 
 // Send transaction
@@ -163,7 +197,7 @@ function send(endpoint, vars, callback) {
   setStatus("Initiating transaction... (please wait)");
   endpoint.estimateGas.apply(this, vars).then(function(gas) {
     vars[vars.length - 1].gas = gas;
-    endpoint.sendTransaction.apply(this, vars).then(function(val) {
+    endpoint.apply(this, vars).then(function(val) {
       return callback(val);
     }).catch(function(e) {
       error(e)
@@ -228,9 +262,38 @@ window.onload = function() {
     if (getUrlParameter('function') == "validate")
       validateTicket(getUrlParameter('ticket'), account);
 
+    // Check if user exists
+    ticketChain.getUser.call({
+      from: account
+    }).then(function(resp) {
+      if (resp[0] == "") {
+        // Create user
+        send(ticketChain.newUser, ["Test name", {
+            from: account
+          }],
+          function(resp) {
+            setStatus("Transaction complete!");
+            refreshUser();
+            return true;
+          }
+        );
+      } else {
+        // Set user params
+        $("#yourName").html(resp[0]);
+        tickets = resp[1];
+      }
+      return true;
+    }).catch(function(e) {
+      error(e)
+    });
+
+    // Set account params
     document.getElementById("yourAccountID").innerHTML = id;
     document.getElementById("yourAddress").innerHTML = account;
     document.getElementById("yourBalance").innerHTML = web3.eth.getBalance(account);
+
+    // Refresh
     refreshTickets();
+    refreshEvents();
   });
 }
