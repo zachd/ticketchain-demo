@@ -5,75 +5,63 @@
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
   <link href="./app.css" rel='stylesheet' type="text/css">
-  <script src="./app.js"></script>
+  <script src="./app.js">
+  </script>
 </head>
 <body>
-  <div class="container-fluid">
-    <h1>TicketChain</h1>
-    <h3>You are logged in as <span id="yourName"></span> Account #<span id="yourAccountID"></span><br>
-    <span id="yourAddress"></span></h3>
-    <p>Your balance is <span id="yourBalance"></span> wei</p>
-    <div id="result"></div>
-
-    <!-- User tickets -->
-    <h3>Your Tickets:</h3>
-    <span id="yourTickets"></span>
-    <table class="table table-striped table-hover" id="myTickets">
-      <thead>
-        <tr>
-          <td>ID</td>
-          <td>Owner</td>
-          <td>Event</td>
-          <td>Price</td>
-          <td>Actions</td>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <span id="status"></span>
-
-    <!-- Market tickets -->
-    <h3>Available Tickets:</h3>
-    <table class="table table-striped" id="market">
-      <thead>
-        <tr>
-          <td>ID</td>
-          <td>Owner</td>
-          <td>Event</td>
-          <td>Price</td>
-          <td>Actions</td>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table><br>
-
-    <!-- List Events -->
-    <h3>Available Events:</h3>
-    <table class="table table-striped" id="availableEvents">
-      <thead>
-        <tr>
-          <td>ID</td>
-          <td>Owner</td>
-          <td>Name</td>
-          <td>Price</td>
-          <td># Tickets</td>
-          <td># Sold</td>
-          <td>Actions</td>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table><br>
-
-    <!-- Create event -->
-    <h3>Create Event</h3><br>
-    <div>
-      <label for="event_name">Event Name:</label><input class="form-control" id="event_name" type="text" />
-      <label for="event_price">Event Price:</label><input class="form-control" id="event_price" type="text" />
-      <label for="event_num_tickets"># Tickets:</label><input class="form-control" id="event_num_tickets" type="text" />
-      <button class="btn btn-primary btn-lg" id="newEvent" onclick="newEvent()">Create</button>
+  <div class="container">
+    <div class="row">
+      <img src="images/logo.png">
+      <h3>You are logged in as <span id="yourName"></span> Account #<span id="yourAccountID"></span><br>
+      <span id="yourAddress"></span></h3>
+      <p>Your balance is <span id="yourBalance"></span> wei</p>
+      <div id="result"></div>
     </div>
-    
+    <div class="row">
+      <h3>Your Tickets:</h3><span id="yourTickets"></span>
+      <table class="table table-striped table-hover" id="myTickets">
+        <thead>
+          <tr>
+            <td>Event</td>
+            <td>Price</td>
+            <td>Actions</td>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <h3>Available Events:</h3>
+        <table class="table table-striped" id="availableEvents">
+          <thead>
+            <tr>
+              <td>Name</td>
+              <td>Price</td>
+              <td># Tickets</td>
+              <td># Sold</td>
+              <td>Actions</td>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="col-md-6">
+        <h3>Available Tickets:</h3>
+        <table class="table table-striped" id="market">
+          <thead>
+            <tr>
+              <td>Event</td>
+              <td>Price</td>
+              <td>Actions</td>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
     <a class="btn btn-default" id="validatelink">Open Ticket Validator</a><br>
+    <span id="status"></span> 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
     </script>
   </div>

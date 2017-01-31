@@ -63,9 +63,10 @@ function refreshEventTickets(event, elem) {
 function fetchTicket(ticket_id, elem, actions) {
   ticketChain.getTicket.call(ticket_id).then(function(ticket) {
     var buttons = "";
+    var event_name = events[ticket[1].valueOf()].data[1];
 
     // Check if on market
-    if (ticket[3]) {
+    if (ticket[3] && ticket[0] == account) {
       buttons = '<button class="btn" onclick="cancelSale(' + ticket_id + ')">Cancel Sale</button>';
     } else {
       // Show appropriate buttons
@@ -76,7 +77,7 @@ function fetchTicket(ticket_id, elem, actions) {
         '<button class="btn" onclick="openPrint(' + ticket_id + ')">View Code</button>';
     }
     // Add to table
-    tableAdd(elem, ticket_id, [ticket_id, ticket[0], ticket[1].valueOf(), ticket[2].valueOf(), buttons]);
+    tableAdd(elem, ticket_id, [event_name, ticket[2].valueOf(), buttons]);
     return true;
   }).catch(function(e) {
     error(e);
@@ -86,9 +87,8 @@ function fetchTicket(ticket_id, elem, actions) {
 // Fetch event
 function fetchEvent(event_id, total) {
   ticketChain.getEvent.call(event_id).then(function(item) {
-    tableAdd('#availableEvents', event_id, [event_id, item[0], item[1],
-      item[2].valueOf(), item[3].valueOf(), item[4].valueOf(),
-      '<button class="btn" onclick="buyTicket(' + event_id + ',' +
+    tableAdd('#availableEvents', event_id, [item[1], item[2].valueOf(), item[3].valueOf(), 
+      item[4].valueOf(), '<button class="btn" onclick="buyTicket(' + event_id + ',' +
       parseInt(item[2].valueOf()) + ')">Buy Ticket</button>'
     ]);
     events.push({
@@ -205,6 +205,8 @@ function send(endpoint, vars, callback) {
 // Add item to table
 function tableAdd(elem, item_id, attrs) {
   var tr = $('<tr>').attr('id', item_id);
+  tr.addClass(elem == '#availableEvents' 
+    ? 'event' : 'ticket');
   $(elem).append(tr);
   for (var attr of attrs)
     tr.append($('<td>').html(attr));
@@ -235,9 +237,14 @@ function setStatus(message) {
 
 // Choose random ID
 function getRandomId() {
-  var num = Math.floor(Math.random() * 100) + 1;
+  var num = Math.floor(Math.random() * 100) + 2;
   localStorage.setItem('account', num);
   return num;
+}
+
+// Check if admin
+function isAdmin() {
+  return window.location.pathname == '/admin/' ? 1 : null;
 }
 
 // Log error
@@ -259,7 +266,7 @@ window.onload = function() {
       alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.");
 
     // Set account parameters
-    var id = getUrlParameter('id') || localStorage.getItem('account') || getRandomId();
+    var id = getUrlParameter('id') || isAdmin() || localStorage.getItem('account') || getRandomId();
     account = accounts[id];
     web3.eth.defaultAccount = account;
 
@@ -280,16 +287,32 @@ window.onload = function() {
       from: account
     }).then(function(resp) {
       if (resp[0] == "") {
-        // Create user
-        send(ticketChain.newUser, ["Test name", {
-            from: account
-          }],
-          function(resp) {
-            setStatus("Transaction complete!");
-            refreshUserTickets();
-            return true;
+        swal({
+          title: "Welcome!",
+          text: "Please enter your name below.",
+          type: "input",
+          showCancelButton: true,
+          closeOnConfirm: false,
+          animation: "slide-from-top"
+        },
+        function(input){
+          if (input === false) return false;
+          if (input === "") {
+            swal.showInputError("You need to write something!");
+            return false
           }
-        );
+          // Create user
+          swal("Hi " + input + "!", "Welcome to Ticketchain.");
+          send(ticketChain.newUser, [input, {
+              from: account
+            }],
+            function(resp) {
+              setStatus("Transaction complete!");
+              refreshUserTickets();
+              return true;
+            }
+          );
+        });
       } else {
         // Set user params
         $("#yourName").html(resp[0]);

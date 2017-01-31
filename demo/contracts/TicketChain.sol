@@ -13,6 +13,7 @@ contract TicketChain {
         uint price;
         uint num_tickets;
         uint num_sold;
+        bool active;
         uint[] market_ticket_ids;
     }
 
@@ -44,6 +45,7 @@ contract TicketChain {
         events[num_events].owner = msg.sender;
         events[num_events].name = name;
         events[num_events].price = price;
+        events[num_events].active = true;
         events[num_events].num_tickets = num_tickets;
     }
 
