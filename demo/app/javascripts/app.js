@@ -95,7 +95,8 @@ function fetchEvent(event_id, total) {
       id: event_id,
       data: item
     });
-    if (event_id == total)
+    // Load market after last event
+    if (event_id == total - 1)
       refreshMarket();
     return true;
   }).catch(function(e) {
