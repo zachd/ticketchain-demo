@@ -12,8 +12,7 @@ function refreshTickets() {
     for (var i = 1; i <= count; i++)
       fetchTicket(i, count);
   }).catch(function(e) {
-    console.log(e);
-    setStatus("Error see log.");
+    error(e)
   });
 }
 
@@ -32,8 +31,7 @@ function fetchTicket(id, count) {
     if (id == count && $('#myTickets tbody > tr').length == 0)
       $('#notickets').show();
   }).catch(function(e) {
-    console.log(e);
-    setStatus("Error see log.");
+    error(e)
   });
 }
 
@@ -106,8 +104,7 @@ function buyTicket() {
     $('#buyTicketDiv').hide();
     refreshTickets();
   }).catch(function(e) {
-    console.log(e);
-    setStatus("An error occured; see log.");
+    error(e)
   });
 };
 
@@ -120,8 +117,7 @@ function sellTicket(id) {
     setStatus("Transaction complete!");
     refreshTickets();
   }).catch(function(e) {
-    console.log(e);
-    setStatus("An error occured; see log.");
+    error(e)
   });
 }
 
@@ -133,8 +129,7 @@ function cancelTicket(id) {
     setStatus("cancel complete!");
     refreshTickets();
   }).catch(function(e) {
-    console.log(e);
-    setStatus("An error occured; see log.");
+    error(e)
   });
 }
 
@@ -146,8 +141,7 @@ function validateTicket(ticketId, owner) {
     else
       swal("Oops!", "This ticket is invalid.", "error");
   }).catch(function(e) {
-    console.log(e);
-    setStatus("An error occured; see log.");
+    error(e)
   });
 }
 
@@ -156,19 +150,35 @@ function newEvent() {
   var name = document.getElementById("event_name").value;
   var price = parseInt(document.getElementById("event_price").value);
   var num_tickets = parseInt(document.getElementById("event_num_tickets").value);
-  setStatus("Initiating transaction... (please wait)");
 
-  ticketChain.newEvent.sendTransaction(name, price, num_tickets, {
-    from: account,
-    gas: web3.toWei('1', 'szabo')
-  }).then(function() {
-    setStatus("Transaction complete!");
-  }).catch(function(e) {
-    console.log(e);
-    setStatus("An error occured; see log.");
-  });
+  send(ticketChain.newEvent, [name, price, num_tickets, {from: account}],
+    function(resp) {
+      setStatus("Transaction complete!");
+      return true;
+    });
 };
 
+// Send transaction
+function send(endpoint, vars, callback) {
+  setStatus("Initiating transaction... (please wait)");
+  endpoint.estimateGas.apply(this, vars).then(function(gas) {
+    vars[vars.length - 1].gas = gas;
+    endpoint.sendTransaction.apply(this, vars).then(function(val) {
+      return callback(val);
+    }).catch(function(e) {
+      error(e)
+    });
+    return true;
+  }).catch(function(e) {
+    error(e)
+  });
+}
+
+// Log error
+function error(e) {
+  console.log(e);
+  setStatus("An error occured; see log.");
+}
 
 // Get parameter from URL
 function getUrlParameter(input) {
@@ -195,19 +205,19 @@ function getRandomId() {
 }
 
 window.onload = function() {
-  web3.eth.getAccounts(function(err, accs) {
+  web3.eth.getAccounts(function(err, accounts) {
     ticketChain = TicketChain.deployed();
 
     // Error checks
     if (err != null)
       alert("There was an error fetching your accounts.");
-    if (accs.length == 0)
+    if (accounts.length == 0)
       alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.");
 
     // Set account parameters
-    accounts = accs;
     var id = getUrlParameter('id') || localStorage.getItem('account') || getRandomId();
     account = accounts[id];
+    web3.eth.defaultAccount = account;
 
     // Set validate link
     $('#validatelink').attr('href', "zxing://scan/?ret=" +
