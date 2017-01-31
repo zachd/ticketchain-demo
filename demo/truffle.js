@@ -14,7 +14,7 @@ module.exports = {
     "images/": "images/"
   },
   rpc: {
-    host: "zach.ie",
-    port: 8546
+    host: "localhost",
+    port: 8545
   }
 };

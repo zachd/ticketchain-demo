@@ -2,73 +2,178 @@ pragma solidity ^0.4.2;
 
 contract TicketChain {
 
-	struct Ticket {
-		address owner;
-		string description;
-		uint price;
-		bool forSale;
-	} 
+    struct User {
+        string name;
+        uint[] ticket_ids;
+    }
 
-	uint totalTicketCount = 0;
+    struct Event {
+        address owner;
+        string name;
+        uint price;
+        uint num_tickets;
+        uint num_sold;
+        uint[] market_ticket_ids;
+    }
 
-	mapping(uint => Ticket) tickets;
+    struct Ticket {
+        address owner;
+        uint event_id;
+        uint price;
+        bool on_market;
+    } 
 
-	function TicketChain() {
-		newTicket(this, "Justin Bieber", 55);
-		newTicket(this, "Justin Bieber", 55);
-		newTicket(this, "Justin Bieber", 55);
-		newTicket(this, "Justin Bieber", 55);
-		newTicket(this, "Adele", 40);
-		newTicket(this, "Adele", 40);
-		newTicket(this, "Adele", 40);
-		newTicket(this, "One Direction", 40);
-		newTicket(this, "Blockchain Hackathon", 15000);
-		newTicket(this, "Blockchain Hackathon", 15000);
-	}
+    uint num_events = 0;
+    uint num_tickets = 0;
 
-	function getTotalTicketCount() returns(uint) {
-		return totalTicketCount;
-	}
+    mapping(address => User) users;
+    mapping(uint => Event) events;
+    mapping(uint => Ticket) tickets;
 
-	function newTicket(address _owner, string _description, uint _price) {
-                totalTicketCount += 1;
-		tickets[totalTicketCount] = Ticket(_owner, _description, _price, true);
-	}
+    function TicketChain() {
+    }
 
-	function buyTicket(uint _uid) payable returns(bool) {
-		Ticket ticket = tickets[_uid];
-		if (msg.value <= ticket.price) throw; // this reverts the transfer if the money sent doesnt match the price
-		if (!ticket.forSale) throw;
-		bool x = ticket.owner.send(ticket.price);
-		address originalOwner = ticket.owner;
-		ticket.owner = msg.sender;
-		ticket.forSale = false;
-		return true;
-	}
+    function newUser(string name) {
+        users[msg.sender].name = name;
+    }
 
-	function sellTicket(uint _uid, uint _price) returns(bool) {
-		Ticket ticket = tickets[_uid];
-		if (! (ticket.owner == msg.sender) ) throw;
-		if (ticket.forSale) throw;
-		ticket.price = _price;
-		ticket.forSale = true;
-	}
+    function newEvent(string name, uint price, uint num_tickets) {
+        num_events += 1;
+        events[num_events].owner = msg.sender;
+        events[num_events].name = name;
+        events[num_events].price = price;
+        events[num_events].num_tickets = num_tickets;
+    }
 
-	function cancelTicketSale(uint _uid) returns(bool) {
-		Ticket ticket = tickets[_uid];
-		if (! (ticket.owner == msg.sender) ) throw;
-		if (!ticket.forSale) throw;
-		ticket.forSale = false;
-	}
+    function newTicket(address owner, uint event_id, uint price) returns(uint){
+        num_tickets += 1;
+        tickets[num_tickets] = Ticket({owner: owner, event_id: event_id, price: price, on_market: false});
+        return num_tickets;
+    }
 
-	function validateTicket(uint _uid, address owner) returns(bool) {
-		return (tickets[_uid].owner == owner);
-	}
+    function buyTicket(uint ticket_id, uint event_id, bool on_market) payable returns(bool) {
+    	User user = users[msg.sender];
+    	Event evnt = events[event_id];
+		uint price = evnt.price;
+		address owner_addr = evnt.owner;
 
-	function getTicketDetails(uint _uid) returns(address owner, uint price, bool forSale, string description) {
-	    owner = tickets[_uid].owner;
-	    price = tickets[_uid].price;
-	    forSale = tickets[_uid].forSale;
-	    description = tickets[_uid].description;
-	  }
+		// Perform some checks
+        if(on_market){
+        	if (!tickets[ticket_id].on_market) throw; // Ticket not for sale
+        	price = tickets[ticket_id].price;
+        	owner_addr = tickets[ticket_id].owner;
+        } else {
+        	if(evnt.num_sold >= num_tickets) throw; // Sold out
+        }
+        if (msg.value <= price) throw; // Insufficient funds
+
+        // Send price of ticket to owner
+        User owner = users[owner_addr];
+        bool x = owner_addr.send(price);
+
+        // Remove from event/user
+        if(on_market){
+        	removeFromUser(owner_addr, ticket_id);
+        	removeFromEvent(event_id, ticket_id);
+        } else {
+        	ticket_id = newTicket(msg.sender, event_id, evnt.price);
+        	evnt.num_sold += 1;
+        }
+
+        // Set new owner of ticket
+        tickets[ticket_id].owner = msg.sender;
+        tickets[ticket_id].on_market = false;
+        user.ticket_ids.push(ticket_id);
+        return true;
+    }
+
+    function sellTicket(uint ticket_id, uint price) returns(bool) {
+        Ticket ticket = tickets[ticket_id];
+
+        // Perform some checks
+        if (!(ticket.owner == msg.sender)) throw;
+        if (ticket.on_market) throw;
+
+   		// Add market data to event
+        Event evnt = events[ticket.event_id];
+        evnt.market_ticket_ids.push(ticket_id);
+
+        // Set price and return
+        ticket.price = price;
+        ticket.on_market = true;
+        return true;
+    }
+
+    function cancelSale(uint ticket_id) returns(bool) {
+        Ticket ticket = tickets[ticket_id];
+
+        // Perform some checks
+        if (!(ticket.owner == msg.sender)) throw;
+        if (!ticket.on_market) throw;
+
+        // Remove from event
+        Event evnt = events[ticket.event_id];
+        removeFromEvent(ticket.event_id, ticket_id);
+
+        // Set ticket to off market
+        ticket.on_market = false;
+        return true;
+    }
+
+    function validateTicket(uint _uid, address owner) returns(bool) {
+        return (tickets[_uid].owner == owner);
+    }
+
+    function getNumEvents() returns(uint) {
+        return num_events;
+    }
+
+    function removeFromEvent(uint event_id, uint ticket_id){
+    	Event evnt = events[event_id];
+    	for(uint i = 0; i < evnt.market_ticket_ids.length; i++){
+    		if(evnt.market_ticket_ids[i] == ticket_id){
+    			if(i < evnt.market_ticket_ids.length - 1){
+    				evnt.market_ticket_ids[i] = evnt.market_ticket_ids[evnt.market_ticket_ids.length - 1];
+    				delete evnt.market_ticket_ids[evnt.market_ticket_ids.length - 1];
+    			} else {
+    				delete evnt.market_ticket_ids[i];
+    			}
+    		}
+    	}
+    }
+
+    function removeFromUser(address owner_addr, uint ticket_id){
+    	User owner = users[owner_addr];
+    	for(uint i = 0; i < owner.ticket_ids.length; i++){
+    		if(owner.ticket_ids[i] == ticket_id){
+    			if(i < owner.ticket_ids.length - 1){
+    				owner.ticket_ids[i] = owner.ticket_ids[owner.ticket_ids.length - 1];
+    				delete owner.ticket_ids[owner.ticket_ids.length - 1];
+    			} else {
+    				delete owner.ticket_ids[i];
+    			}
+    		}
+    	}
+    }
+
+    function getUser() returns(address addr, string name, uint[] ticket_ids) {
+        name = users[msg.sender].name;
+        ticket_ids = users[msg.sender].ticket_ids;
+    }
+
+    function getEvent(uint event_id) returns(address owner, string name, uint price, uint num_tickets, uint num_sold, uint[] market_ticket_ids) {
+        owner = events[event_id].owner;
+        name = events[event_id].name;
+        price = events[event_id].price;
+        num_tickets = events[event_id].num_tickets;
+        num_sold = events[event_id].num_sold;
+        market_ticket_ids = events[event_id].market_ticket_ids;
+    }
+
+    function getTicket(uint ticket_id) returns(address owner, uint event_id, uint price, bool on_market) {
+        owner = tickets[ticket_id].owner;
+        event_id = tickets[ticket_id].event_id;
+        price = tickets[ticket_id].price;
+        on_market = tickets[ticket_id].on_market;
+    }
 }
