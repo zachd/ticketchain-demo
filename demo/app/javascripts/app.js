@@ -41,7 +41,6 @@ function refreshEventTickets(event, elem) {
 // Refresh user
 function refreshUserTickets() {
   tickets = [];
-  $("#yourName").empty();
   ticketChain.getUser.call({
     from: account
   }).then(function(resp) {
@@ -102,8 +101,9 @@ function fetchEvent(event_id, total) {
     });
     // Load market/tickets after last event
     if (event_id == total - 1){
-      refreshUserTickets();
       refreshMarket();
+      refreshUserTickets();
+      swal.close();
     }
     return true;
   }).catch(function(e) {
@@ -335,7 +335,6 @@ window.onload = function() {
       } else {
         // Set user params
         $("#yourName").html(resp[0]);
-        swal.close();
         tickets = resp[1];
         // Initial refresh (if existing)
         refresh();
