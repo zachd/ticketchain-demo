@@ -172,7 +172,7 @@ function sellTicket(ticket_id) {
         return false
       }
       showLoading();
-      send(ticketChain.sellTicket, [ticket_id, input, {
+      send(ticketChain.sellTicket, [ticket_id, parseInt(input) * WEI_CONVERSION, {
           from: account
         }],
         function() {
