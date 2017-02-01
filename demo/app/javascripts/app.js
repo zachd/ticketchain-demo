@@ -85,7 +85,7 @@ function fetchTicket(ticket_id, elem, actions) {
     // Add to table
     if (elem == "#market")
       tableAdd(elem, ticket_id, [event_name, showPrice(ticket[2].valueOf()), buttons]);
-    else if(elem == '#myTickets')
+    else if (elem == '#myTickets')
       tableAdd(elem, ticket_id, [event_name, showPrice(ticket[2].valueOf()), buttons]);
     return true;
   }).catch(function(e) {
@@ -109,10 +109,10 @@ function fetchEvent(event_id, total) {
       refreshMarket();
       refreshUserTickets();
       // Hide loading screen if not validator
-      if(alrt){
+      if (alrt) {
         swal(alrt);
         alrt = null;
-      } else if($('.sweet-alert h2').text() == 'Loading...')
+      } else if ($('.sweet-alert h2').text() == 'Loading...')
         swal.close();
     }
     return true;
@@ -137,19 +137,19 @@ function buyTicket(event_id, price, ticket_id) {
     }],
     function(resp) {
       setStatus("Transaction complete!");
-          alrt = {
-            title: "Success!",
-            text: "You just bought a ticket to " + event_name 
-              + " for " + showPrice(price - 1) + "!",
-            type: "success",
-            showConfirmButton: false,
-            timer: 1750
-          };
+      alrt = {
+        title: "Success!",
+        text: "You just bought a ticket to " + event_name +
+          " for " + showPrice(price - 1) + "!",
+        type: "success",
+        showConfirmButton: false,
+        timer: 1750
+      };
       refresh();
       return true;
     },
-    "An error occurred. " + (on_market ? "This ticket might already be sold." 
-      : "This event might be sold out.")
+    "An error occurred. " + (on_market ? "This ticket might already be sold." :
+      "This event might be sold out.")
   );
 }
 
@@ -246,10 +246,14 @@ function newEvent() {
 function newUser(name) {
   if (name === false) return false;
   if (name === "") {
-    swal.showInputError("You need to write something!");
+    swal.showInputError("Please enter a valid name");
     return false
   }
-  swal("Hi " + name + "!", "Welcome to TicketChain.");
+  swal({
+    title: "Hi " + name + "!",
+    text: "Welcome to TicketChain.",
+    timer: 1250
+  });
   send(ticketChain.newUser, [name, {
       from: account
     }],
@@ -307,16 +311,16 @@ function openValidator(ticket_id) {
   swal({
     title: 'Ticket Validator',
     text: 'This verifies the QR code on your ticket with <em>TicketChain</em>.<br />Install one of the apps below and click Open Scanner.<br /><br />' +
-    '<a href="https://play.google.com/store/apps/details?id=com.google.zxing.client.android" target="_blank"><img src="/images/playstore.png"></a> ' +
-    '<a href="https://itunes.apple.com/ie/app/qrafter-qr-code-reader-generator/id416098700" target="_blank"><img src="/images/appstore.svg"></a><br />' +
-    '<strong>Barcode Scanner</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
-    '<strong>Qrafter</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+      '<a href="https://play.google.com/store/apps/details?id=com.google.zxing.client.android" target="_blank"><img src="/images/playstore.png"></a> ' +
+      '<a href="https://itunes.apple.com/ie/app/qrafter-qr-code-reader-generator/id416098700" target="_blank"><img src="/images/appstore.svg"></a><br />' +
+      '<strong>Barcode Scanner</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
+      '<strong>Qrafter</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
     confirmButtonText: "Open Scanner",
     showCancelButton: true,
     html: true
   }, function() {
-    window.open("zxing://scan/?ret=" + encodeURIComponent(location.protocol + '//' 
-      + location.host + location.pathname + "?id=" + id + "&function=validate&ticket={CODE}"));
+    window.open("zxing://scan/?ret=" + encodeURIComponent(location.protocol + '//' +
+      location.host + location.pathname + "?id=" + id + "&function=validate&ticket={CODE}"));
   });
   return false;
 }
@@ -351,7 +355,7 @@ function getRandomId() {
   return num;
 }
 
-function showPrice(price){
+function showPrice(price) {
   return price == 0 ? 'Free' : '\u20AC' + price + '.00';
 }
 
@@ -382,9 +386,9 @@ window.onload = function() {
 
     // Error checks
     if (err != null)
-      alert("There was an error fetching your accounts.");
+      alert("There was an error connecting to the Blockchain.");
     if (accounts.length == 0)
-      alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.");
+      alert("Couldn't get any Blockchain accounts! Please try again later.");
 
     // Set account parameters
     id = getUrlParameter('id') || isAdmin() || localStorage.getItem('account') || getRandomId();
@@ -407,8 +411,8 @@ window.onload = function() {
               title: "Welcome!",
               text: "Please enter your name below.",
               type: "input",
-              showCancelButton: true,
-              closeOnConfirm: false
+              closeOnConfirm: false,
+              closeOnCancel: false
             },
             function(input) {
               newUser(input);
