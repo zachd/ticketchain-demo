@@ -5,6 +5,7 @@ var tickets;
 var events;
 var alrt;
 var ticketChain;
+var WEI_CONVERSION = 1000;
 
 
 /**** REFRESH FUNCTIONS ****/
@@ -17,7 +18,7 @@ function refresh() {
 // Refresh events
 function refreshEvents() {
   events = [];
-  $("#availableEvents tbody").empty();
+  $("#availableEvents").empty();
   ticketChain.getNumEvents.call().then(function(count) {
     for (var i = 0; i < count; i++)
       fetchEvent(i, count);
@@ -59,6 +60,8 @@ function refreshMyTickets() {
   $("#myTickets tbody").empty();
   for (var i = 0; i < tickets.length; i++)
     fetchTicket(tickets[i].valueOf(), '#myTickets');
+  if(tickets.length == 0)
+    $('#myTickets tbody').append('<tr><td class="empty" colspan="3">You haven\'t purchased a ticket yet.</td></tr>');
 }
 
 
@@ -80,26 +83,25 @@ function fetchTicket(ticket_id, elem, actions) {
         parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Buy Ticket</button>';
       else if (elem == "#myTickets")
         buttons = '<button class="btn" onclick="sellTicket(' + ticket_id + ')">Sell Ticket</button>' +
-        '<button class="btn" onclick="openPrint(' + ticket_id + ')">View Code</button>';
+        '<button class="btn" onclick="openPrint(' + ticket_id + ')">QR Code</button>';
     }
     // Add to table
     if (elem == "#market")
-      tableAdd(elem, ticket_id, [event_name, showPrice(ticket[2].valueOf()), buttons]);
+      addTableRow(elem, ticket_id, ['<img src="/images/ticket.png" class="ticket-icon" /> ' +
+        '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons]);
     else if (elem == '#myTickets')
-      tableAdd(elem, ticket_id, [event_name, showPrice(ticket[2].valueOf()), buttons]);
+      addTableRow(elem, ticket_id, ['<img src="/images/ticket.png" class="ticket-icon" /> ' +
+        '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons]);
     return true;
   }).catch(function(e) {
     error(e);
-  });
-}
+  });}
+
 
 // Fetch event
 function fetchEvent(event_id, total) {
   ticketChain.getEvent.call(event_id).then(function(item) {
-    tableAdd('#availableEvents', event_id, [item[1], showPrice(item[2].valueOf()), item[3].valueOf(),
-      item[4].valueOf(), '<button class="btn" onclick="buyTicket(' + event_id + ',' +
-      parseInt(item[2].valueOf()) + ')">Buy Ticket</button>'
-    ]);
+    addEvent('#availableEvents', event_id, item[1], item[2].valueOf(), item[3].valueOf(), item[4].valueOf());
     events.push({
       id: event_id,
       data: item
@@ -229,7 +231,7 @@ function validateTicket(ticket_id, owner) {
 // Create event
 function newEvent() {
   var name = document.getElementById("event_name").value;
-  var price = parseInt(document.getElementById("event_price").value);
+  var price = parseInt(document.getElementById("event_price").value) * WEI_CONVERSION;
   var num_tickets = parseInt(document.getElementById("event_num_tickets").value);
 
   send(ticketChain.newEvent, [name, price, num_tickets, {
@@ -260,7 +262,7 @@ function newUser(name) {
     }],
     function(resp) {
       setStatus("Transaction complete!");
-      $("#yourName").html(resp[0]);
+      $("#yourName").html(name);
       // Initial refresh (if new)
       refresh();
       return true;
@@ -287,11 +289,19 @@ function send(endpoint, vars, callback, error_msg) {
   });
 }
 
+// Add item to events
+function addEvent(elem, event_id, name, price, num_tickets, num_sold) {
+  var event = $('<div>').attr('class', 'event col-sm-6 col-md-3');
+  $(elem).append(event);
+  event.html('<div class="image"><img src="/images/events/' + name + '.png"><div class="details"><h3>' +
+    name + '</h3><div class="price">' + showPrice(price) + '</div><button class="btn" onclick="buyTicket(' 
+    + event_id + ',' + parseInt(price) + ')">Purchase</button></div></div>');
+}
+
 // Add item to table
-function tableAdd(elem, item_id, attrs) {
+function addTableRow(elem, item_id, attrs) {
   var tr = $('<tr>').attr('id', item_id);
-  tr.addClass(elem == '#availableEvents' ?
-    'event' : 'ticket');
+  tr.addClass('ticket');
   $(elem).append(tr);
   for (var attr of attrs)
     tr.append($('<td>').html(attr));
@@ -356,7 +366,7 @@ function getRandomId() {
 }
 
 function showPrice(price) {
-  return price == 0 ? 'Free' : '\u20AC' + price + '.00';
+  return price == 0 ? 'Free' : '\u20AC' + (price / WEI_CONVERSION) + '.00';
 }
 
 // Check if admin

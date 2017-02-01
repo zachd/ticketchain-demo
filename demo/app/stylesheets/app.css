@@ -12,13 +12,18 @@ h1, h2 {
 }
 h2 {
   color: #AAA;
-  font-size: 26px;
-}
-h3 {
-  color: #AAA;
   text-transform: uppercase;
   font-weight: bold;
   font-size: 18px;
+}
+h3 {
+  color: black;
+  font-weight: bold;
+  font-size: 16px;
+  display: inline-block;
+}
+hr {
+  border-top: 1px solid #ccc;
 }
 
 /* Structure classes */
@@ -29,12 +34,13 @@ h3 {
 .btn {
   margin-right: 5px;
 }
+/* User box */
 .usercolumn {
   text-align: right;
+  padding-right: 0px;
 }
 .userbox {
   padding: 5px 15px 5px 5px;
-  margin: 10px;
   display: inline-block;
   border-radius: 10px;
 }
@@ -51,6 +57,77 @@ h3 {
 .userbox .details {
   font-size: 12px;
 }
+/* Events row */
+.events-row {
+  margin-bottom:10px;
+}
+.event {
+  display: inline-block;
+}
+.event .image {
+  position: relative; 
+  border-radius: 5px;
+  overflow: hidden;
+}
+.event h3 {
+  margin: 0px;
+}
+@media screen and (max-width:768px){
+  #logo {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  .event {
+    margin-bottom: 5px;
+  }
+  .ticket .btn {
+    padding: 3px 6px;
+  }
+  .usercolumn {
+    text-align: center;
+  }
+}
+/* Zoom: http://stackoverflow.com/a/15757620 */
+.event img {
+  width: 100%;
+  -webkit-transition: all 0.1s ease;
+  transition: all 0.1s ease;
+}
+.event:hover img {
+  -webkit-transform: scale(1.03) rotate(0.5deg);
+   transform: scale(1.03) rotate(0.5deg);
+}
+.event button {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+}
+.event .details {
+  position: absolute;
+  left: 0;
+  bottom: 0px;
+  width: 100%;
+  padding: 3px 8px 2px;
+  background-color: rgba(150, 150, 150, 0.8);
+}
+.event .price {
+  font-weight: bold;
+  color: white;
+}
+/* Tickets table row */
+.ticket-event-name {
+  font-weight: bold;
+}
+td.empty {
+  text-align: center;
+}
+.ticket-icon {
+  width: 17px;
+  height: 17px;
+  vertical-align: text-top;
+  margin-right: 3px;
+}
+/* Bottom bar */
 #status {
   font-family: courier;
   position: absolute;
