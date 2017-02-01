@@ -5,7 +5,9 @@ var tickets;
 var events;
 var alrt;
 var ticketChain;
-var WEI_CONVERSION = 1000;
+var WEI_CONVERSION = 10000000000000000;
+var TRANSAC_FEE = 10000;
+var RESALE_LIMIT = 1.5;
 
 
 /**** REFRESH FUNCTIONS ****/
@@ -60,7 +62,7 @@ function refreshMyTickets() {
   $("#myTickets tbody").empty();
   for (var i = 0; i < tickets.length; i++)
     fetchTicket(tickets[i].valueOf(), '#myTickets');
-  if(tickets.length == 0)
+  if (tickets.length == 0)
     $('#myTickets tbody').append('<tr><td class="empty" colspan="3">You haven\'t purchased a ticket yet.</td></tr>');
 }
 
@@ -82,20 +84,24 @@ function fetchTicket(ticket_id, elem, actions) {
         buttons = '<button class="btn" onclick="buyTicket(' + ticket[1].valueOf() + ', ' +
         parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Buy Ticket</button>';
       else if (elem == "#myTickets")
-        buttons = '<button class="btn" onclick="sellTicket(' + ticket_id + ')">Sell Ticket</button>' +
+        buttons = '<button class="btn" onclick="sellTicket(' + ticket_id + ', \'' + event_name +
+        '\', ' + parseInt(ticket[2].valueOf()) + ')">Sell Ticket</button>' +
         '<button class="btn" onclick="openPrint(' + ticket_id + ')">QR Code</button>';
     }
     // Add to table
     if (elem == "#market")
       addTableRow(elem, ticket_id, ['<img src="/images/ticket.png" class="ticket-icon" /> ' +
-        '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons]);
+        '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons
+      ]);
     else if (elem == '#myTickets')
       addTableRow(elem, ticket_id, ['<img src="/images/ticket.png" class="ticket-icon" /> ' +
-        '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons]);
+        '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons
+      ]);
     return true;
   }).catch(function(e) {
     error(e);
-  });}
+  });
+}
 
 
 // Fetch event
@@ -131,7 +137,7 @@ function buyTicket(event_id, price, ticket_id) {
   var event_name = events[event_id].data[1];
   var on_market = ticket_id !== undefined;
   ticket_id = on_market ? ticket_id : 0;
-  price += 1;
+  price += TRANSAC_FEE;
   showLoading();
   send(ticketChain.buyTicket, [event_id, ticket_id, on_market, {
       from: account,
@@ -142,7 +148,7 @@ function buyTicket(event_id, price, ticket_id) {
       alrt = {
         title: "Success!",
         text: "You just bought a ticket to " + event_name +
-          " for " + showPrice(price - 1) + "!",
+          " for " + showPrice(price - TRANSAC_FEE) + "!",
         type: "success",
         showConfirmButton: false,
         timer: 1750
@@ -156,19 +162,25 @@ function buyTicket(event_id, price, ticket_id) {
 }
 
 // Sell ticket
-function sellTicket(ticket_id) {
+function sellTicket(ticket_id, event_name, orig_price) {
   swal({
       title: "Sell Ticket",
-      text: "Please enter a resale price",
+      text: "Enter a resale price for your " + event_name + " ticket.",
       type: "input",
       showCancelButton: true,
       closeOnConfirm: false
     },
     function(input) {
       if (input === false) return false;
-      if (input === "" || isNaN(input)
-          || parseInt(input) < 0 || input.length > 10) {
+      var max_price = orig_price * RESALE_LIMIT;
+      if (input === "" || isNaN(input) ||
+        parseInt(input) < 0 || input.length > 10) {
         swal.showInputError("Amount invalid! Please try again.");
+        return false
+      }
+      if (parseInt(input) > (max_price / WEI_CONVERSION)) {
+        swal.showInputError('Ticket resale is limited to a ' + ((RESALE_LIMIT - 1) * 100) +
+          '% markup (' + showPrice(max_price) + ')');
         return false
       }
       showLoading();
@@ -179,7 +191,8 @@ function sellTicket(ticket_id) {
           setStatus("Transaction complete!");
           alrt = {
             title: "Success!",
-            text: "Your ticket is now on the market.",
+            text: "Your ticket is now on the market for " +
+              showPrice(parseInt(input) * WEI_CONVERSION) + ".",
             type: "success",
             showConfirmButton: false,
             timer: 1750
@@ -294,8 +307,8 @@ function addEvent(elem, event_id, name, price, num_tickets, num_sold) {
   var event = $('<div>').attr('class', 'event col-sm-6 col-md-3');
   $(elem).append(event);
   event.html('<div class="image"><img src="/images/events/' + name + '.png"><div class="details"><h3>' +
-    name + '</h3><div class="price">' + showPrice(price) + '</div><button class="btn" onclick="buyTicket(' 
-    + event_id + ',' + parseInt(price) + ')">Purchase</button></div></div>');
+    name + '</h3><div class="price">' + showPrice(price) + '</div><button class="btn" onclick="buyTicket(' +
+    event_id + ',' + parseInt(price) + ')">Purchase</button></div></div>');
 }
 
 // Add item to table
@@ -366,7 +379,7 @@ function getRandomId() {
 }
 
 function showPrice(price) {
-  return price == 0 ? 'Free' : '\u20AC' + (price / WEI_CONVERSION) + '.00';
+  return price == 0 ? 'Free' : '\u20AC' + Math.floor(price / WEI_CONVERSION) + '.00';
 }
 
 // Check if admin
@@ -441,8 +454,9 @@ window.onload = function() {
     });
 
     // Set account params
-    document.getElementById("yourAccountID").innerHTML = id;
-    //document.getElementById("yourBalance").innerHTML = web3.fromWei(web3.eth.getBalance(account));
+    //document.getElementById("yourAccountID").innerHTML = id;
+    document.getElementById("yourBalance").innerHTML = '\u20AC' +
+      (web3.eth.getBalance(account) / WEI_CONVERSION).toLocaleString() + '.00';
 
   });
 }
