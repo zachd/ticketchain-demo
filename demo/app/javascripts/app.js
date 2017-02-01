@@ -147,7 +147,9 @@ function buyTicket(event_id, price, ticket_id) {
           };
       refresh();
       return true;
-    }
+    },
+    "An error occurred. " + (on_market ? "This ticket might already be sold." 
+      : "This event might be sold out.")
   );
 }
 
@@ -195,6 +197,13 @@ function cancelSale(ticket_id) {
     }],
     function() {
       setStatus("Transaction complete!");
+      alrt = {
+        title: "Alright!",
+        text: "Your ticket was taken off the market.",
+        type: "success",
+        showConfirmButton: false,
+        timer: 1750
+      };
       refresh();
       return true;
     }
@@ -258,7 +267,7 @@ function newUser(name) {
 /**** HELPER FUNCTIONS ****/
 
 // Send transaction
-function send(endpoint, vars, callback) {
+function send(endpoint, vars, callback, error_msg) {
   setStatus("Initiating transaction... (please wait)");
   endpoint.estimateGas.apply(this, vars).then(function(gas) {
     vars[vars.length - 1].gas = gas * 2;
@@ -269,7 +278,7 @@ function send(endpoint, vars, callback) {
     });
     return true;
   }).catch(function(e) {
-    error(e);
+    error(e, error_msg);
   });
 }
 
@@ -343,7 +352,7 @@ function getRandomId() {
 }
 
 function showPrice(price){
-  return price == 0 ? 'Free' : '€' + price + '.00';
+  return price == 0 ? 'Free' : '\u20AC' + price + '.00';
 }
 
 // Check if admin
@@ -352,8 +361,15 @@ function isAdmin() {
 }
 
 // Log error
-function error(e) {
+function error(e, error_msg) {
   console.log(e);
+  swal({
+    title: "Oops!",
+    text: error_msg ? error_msg : "An error occurred. Please try again.",
+    type: "error",
+    showConfirmButton: false,
+    timer: 1750
+  });
   setStatus("An error occured; see log.");
 }
 
