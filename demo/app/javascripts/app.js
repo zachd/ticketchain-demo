@@ -1,7 +1,9 @@
+var id;
 var accounts;
 var account;
 var tickets;
 var events;
+var alrt;
 var ticketChain;
 
 
@@ -81,7 +83,10 @@ function fetchTicket(ticket_id, elem, actions) {
         '<button class="btn" onclick="openPrint(' + ticket_id + ')">View Code</button>';
     }
     // Add to table
-    tableAdd(elem, ticket_id, [event_name, ticket[2].valueOf(), buttons]);
+    if (elem == "#market")
+      tableAdd(elem, ticket_id, [event_name, showPrice(ticket[2].valueOf()), buttons]);
+    else if(elem == '#myTickets')
+      tableAdd(elem, ticket_id, [event_name, showPrice(ticket[2].valueOf()), buttons]);
     return true;
   }).catch(function(e) {
     error(e);
@@ -91,7 +96,7 @@ function fetchTicket(ticket_id, elem, actions) {
 // Fetch event
 function fetchEvent(event_id, total) {
   ticketChain.getEvent.call(event_id).then(function(item) {
-    tableAdd('#availableEvents', event_id, [item[1], item[2].valueOf(), item[3].valueOf(),
+    tableAdd('#availableEvents', event_id, [item[1], showPrice(item[2].valueOf()), item[3].valueOf(),
       item[4].valueOf(), '<button class="btn" onclick="buyTicket(' + event_id + ',' +
       parseInt(item[2].valueOf()) + ')">Buy Ticket</button>'
     ]);
@@ -100,11 +105,14 @@ function fetchEvent(event_id, total) {
       data: item
     });
     // Load market/tickets after last event
-    if (event_id == total - 1){
+    if (event_id == total - 1) {
       refreshMarket();
       refreshUserTickets();
       // Hide loading screen if not validator
-      if (getUrlParameter('function') !== "validate")
+      if(alrt){
+        swal(alrt);
+        alrt = null;
+      } else if($('.sweet-alert h2').text() == 'Loading...')
         swal.close();
     }
     return true;
@@ -118,15 +126,25 @@ function fetchEvent(event_id, total) {
 
 // Buy ticket
 function buyTicket(event_id, price, ticket_id) {
-  on_market = ticket_id !== undefined;
+  var event_name = events[event_id].data[1];
+  var on_market = ticket_id !== undefined;
   ticket_id = on_market ? ticket_id : 0;
   price += 1;
+  showLoading();
   send(ticketChain.buyTicket, [event_id, ticket_id, on_market, {
       from: account,
       value: price
     }],
     function(resp) {
       setStatus("Transaction complete!");
+          alrt = {
+            title: "Success!",
+            text: "You just bought a ticket to " + event_name 
+              + " for " + showPrice(price - 1) + "!",
+            type: "success",
+            showConfirmButton: false,
+            timer: 1750
+          };
       refresh();
       return true;
     }
@@ -135,20 +153,43 @@ function buyTicket(event_id, price, ticket_id) {
 
 // Sell ticket
 function sellTicket(ticket_id) {
-  var price = prompt("Please enter a price");
-  send(ticketChain.sellTicket, [ticket_id, price, {
-      from: account
-    }],
-    function() {
-      setStatus("Transaction complete!");
-      refresh();
-      return true;
+  swal({
+      title: "Sell Ticket",
+      text: "Please enter a resale price",
+      type: "input",
+      showCancelButton: true,
+      closeOnConfirm: false
+    },
+    function(input) {
+      if (input === false) return false;
+      if (input === "" || isNaN(input)) {
+        swal.showInputError("Amount invalid! Please try again.");
+        return false
+      }
+      showLoading();
+      send(ticketChain.sellTicket, [ticket_id, input, {
+          from: account
+        }],
+        function() {
+          setStatus("Transaction complete!");
+          alrt = {
+            title: "Success!",
+            text: "Your ticket is now on the market.",
+            type: "success",
+            showConfirmButton: false,
+            timer: 1750
+          };
+          refresh();
+          return true;
+        }
+      );
     }
   );
 }
 
 // Cancel ticket
 function cancelSale(ticket_id) {
+  showLoading();
   send(ticketChain.cancelSale, [ticket_id, {
       from: account
     }],
@@ -242,6 +283,35 @@ function tableAdd(elem, item_id, attrs) {
     tr.append($('<td>').html(attr));
 }
 
+// Show loading popup
+function showLoading() {
+  swal({
+    title: 'Loading...',
+    text: '<img src="/images/loading.gif" height="100" width="100">',
+    showConfirmButton: false,
+    timer: 10000,
+    html: true
+  });
+}
+// Open print screen
+function openValidator(ticket_id) {
+  swal({
+    title: 'Ticket Validator',
+    text: 'This verifies the QR code on your ticket with <em>TicketChain</em>.<br />Install one of the apps below and click Open Scanner.<br /><br />' +
+    '<a href="https://play.google.com/store/apps/details?id=com.google.zxing.client.android" target="_blank"><img src="/images/playstore.png"></a> ' +
+    '<a href="https://itunes.apple.com/ie/app/qrafter-qr-code-reader-generator/id416098700" target="_blank"><img src="/images/appstore.svg"></a><br />' +
+    '<strong>Barcode Scanner</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
+    '<strong>Qrafter</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
+    confirmButtonText: "Open Scanner",
+    showCancelButton: true,
+    html: true
+  }, function() {
+    window.open("zxing://scan/?ret=" + encodeURIComponent(location.protocol + '//' 
+      + location.host + location.pathname + "?id=" + id + "&function=validate&ticket={CODE}"));
+  });
+  return false;
+}
+
 // Open print screen
 function openPrint(ticket_id) {
   window.open('ticket/?id=' + ticket_id);
@@ -272,6 +342,10 @@ function getRandomId() {
   return num;
 }
 
+function showPrice(price){
+  return price == 0 ? 'Free' : '€' + price + '.00';
+}
+
 // Check if admin
 function isAdmin() {
   return window.location.pathname == '/admin/' ? 1 : null;
@@ -286,12 +360,7 @@ function error(e) {
 /**** MAIN WINDOW ONLOAD EVENT ****/
 
 window.onload = function() {
-  swal({
-    title: 'Loading...',
-    text: '<img src="images/loading.gif" height="100" width="100">',
-    showConfirmButton: false,
-    html: true
-  });
+  showLoading();
   web3.eth.getAccounts(function(err, accounts) {
     ticketChain = TicketChain.deployed();
 
@@ -302,14 +371,9 @@ window.onload = function() {
       alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.");
 
     // Set account parameters
-    var id = getUrlParameter('id') || isAdmin() || localStorage.getItem('account') || getRandomId();
+    id = getUrlParameter('id') || isAdmin() || localStorage.getItem('account') || getRandomId();
     account = accounts[id];
     web3.eth.defaultAccount = account;
-
-    // Set validate link
-    $('#validatelink').attr('href', "zxing://scan/?ret=" +
-      encodeURIComponent(location.protocol + '//' + location.host + location.pathname +
-        "?id=" + id + "&function=validate&ticket={CODE}"));
 
     // Show validation result
     if (getUrlParameter('function') == "validate")
