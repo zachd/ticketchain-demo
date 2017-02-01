@@ -81,8 +81,8 @@ function fetchTicket(ticket_id, elem, actions) {
     } else {
       // Show appropriate buttons
       if (elem == "#market")
-        buttons = '<button class="btn" onclick="buyTicket(' + ticket[1].valueOf() + ', ' +
-        parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Buy Ticket</button>';
+        buttons = '<button class="btn" onclick="buyTicket(' + ticket[1].valueOf() + ', \'' + event_name
+         + '\', ' + parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Buy Ticket</button>';
       else if (elem == "#myTickets")
         buttons = '<button class="btn" onclick="sellTicket(' + ticket_id + ', \'' + event_name +
         '\', ' + parseInt(ticket[2].valueOf()) + ')">Sell Ticket</button>' +
@@ -133,8 +133,7 @@ function fetchEvent(event_id, total) {
 /**** BUTTON FUNCTIONS ****/
 
 // Buy ticket
-function buyTicket(event_id, price, ticket_id) {
-  var event_name = events[event_id].data[1];
+function buyTicket(event_id, event_name, price, ticket_id) {
   var on_market = ticket_id !== undefined;
   ticket_id = on_market ? ticket_id : 0;
   price += TRANSAC_FEE;
@@ -308,7 +307,7 @@ function addEvent(elem, event_id, name, price, num_tickets, num_sold) {
   $(elem).append(event);
   event.html('<div class="image"><img src="/images/events/' + name + '.png"><div class="details"><h3>' +
     name + '</h3><div class="price">' + showPrice(price) + '</div><button class="btn" onclick="buyTicket(' +
-    event_id + ',' + parseInt(price) + ')">Purchase</button></div></div>');
+    + event_id + ', \'' + name + '\', ' + parseInt(price) + ')">Purchase</button></div></div>');
 }
 
 // Add item to table
