@@ -103,7 +103,9 @@ function fetchEvent(event_id, total) {
     if (event_id == total - 1){
       refreshMarket();
       refreshUserTickets();
-      swal.close();
+      // Hide loading screen if not validator
+      if (getUrlParameter('function') !== "validate")
+        swal.close();
     }
     return true;
   }).catch(function(e) {
@@ -197,13 +199,13 @@ function newUser(name) {
     swal.showInputError("You need to write something!");
     return false
   }
+  swal("Hi " + name + "!", "Welcome to TicketChain.");
   send(ticketChain.newUser, [name, {
       from: account
     }],
     function(resp) {
       setStatus("Transaction complete!");
       $("#yourName").html(resp[0]);
-      swal("Hi " + name + "!", "Welcome to TicketChain.");
       // Initial refresh (if new)
       refresh();
       return true;
