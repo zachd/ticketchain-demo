@@ -164,7 +164,8 @@ function sellTicket(ticket_id) {
     },
     function(input) {
       if (input === false) return false;
-      if (input === "" || isNaN(input)) {
+      if (input === "" || isNaN(input)
+          || parseInt(input) < 0 || input.length > 10) {
         swal.showInputError("Amount invalid! Please try again.");
         return false
       }
