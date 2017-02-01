@@ -1,50 +1,90 @@
+/* General classes */
 body {
   font-family: "Open Sans", sans-serif;
 }
-
-#yourAddress {
-  color: black;
-  font-weight: bold;
-}
-
-label {
-  display: inline-block;
-  width: 100px;
-}
-
-input {
-  width: 500px;
-  padding: 5px;
-  font-size: 16px;
-}
-
 button {
   font-size: 16px;
   padding: 5px;
 }
-
 h1, h2 {
-  display: inline-block;
-  vertical-align: middle;
   margin-top: 0px;
   margin-bottom: 10px;
 }
-
 h2 {
   color: #AAA;
-  font-size: 32px;
+  font-size: 26px;
 }
-
 h3 {
-  font-weight: normal;
   color: #AAA;
-  font-size: 24px;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 18px;
 }
 
-.black {
-  color: black;
+/* Structure classes */
+.container {
+  padding: 20px;
+  position: relative;
+}
+.btn {
+  margin-right: 5px;
+}
+.usercolumn {
+  text-align: right;
+}
+.userbox {
+  padding: 5px 15px 5px 5px;
+  margin: 10px;
+  display: inline-block;
+  border-radius: 10px;
+}
+.userbox img {
+  float: left;
+  width: 42px;
+  height: 40px;
+}
+.userbox .name {
+  font-size: 17px;
+  display: inline-block;
+  font-weight: bold;
+}
+.userbox .details {
+  font-size: 12px;
+}
+#status {
+  font-family: courier;
+  position: absolute;
+  font-weight: bold;
+  margin-left: 5px;
+  left: 0;
+  bottom: 0;
+}
+.powered-by {
+  position: absolute;
+  font-weight: bold;
+  padding: 5px;
+  right: 0;
+  bottom: 0;
+}
+.powered-by img {
+  height: 20px;
 }
 
-#balance {
-  color: black;
+
+/* Mayflower theme */ 
+body.mayflower {
+  background-color: black;
+}
+.mayflower .content {
+  background-color: white;
+}
+.mayflower #logo {
+  margin: 20px;
+  background-image: url('images/mayflower-logo.png');
+  background-size: 245px 55px;
+  height: 55px;
+  width: 245px;
+}
+.mayflower .userbox {
+  background-color: #FF8600;
 }

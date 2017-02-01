@@ -432,8 +432,7 @@ window.onload = function() {
 
     // Set account params
     document.getElementById("yourAccountID").innerHTML = id;
-    document.getElementById("yourAddress").innerHTML = account;
-    document.getElementById("yourBalance").innerHTML = web3.eth.getBalance(account);
+    //document.getElementById("yourBalance").innerHTML = web3.fromWei(web3.eth.getBalance(account));
 
   });
 }
