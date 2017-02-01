@@ -50,6 +50,7 @@ function refreshUserTickets() {
     from: account
   }).then(function(resp) {
     tickets = resp[1];
+    $('#yourBalance').html(getBalance());
     refreshMyTickets();
     return true;
   }).catch(function(e) {
@@ -377,6 +378,10 @@ function getRandomId() {
   return num;
 }
 
+function getBalance() {
+  return '\u20AC' + (web3.eth.getBalance(account) / WEI_CONVERSION).toLocaleString() + '.00';
+}
+
 function showPrice(price) {
   return price == 0 ? 'Free' : '\u20AC' + Math.floor(price / WEI_CONVERSION) + '.00';
 }
@@ -454,8 +459,7 @@ window.onload = function() {
 
     // Set account params
     //document.getElementById("yourAccountID").innerHTML = id;
-    document.getElementById("yourBalance").innerHTML = '\u20AC' +
-      (web3.eth.getBalance(account) / WEI_CONVERSION).toLocaleString() + '.00';
+    document.getElementById("yourBalance").innerHTML = getBalance();
 
   });
 }
