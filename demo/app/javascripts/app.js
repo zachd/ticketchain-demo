@@ -2,8 +2,9 @@ var id;
 var accounts;
 var account;
 var tickets;
-var events;
 var alrt;
+var events;
+var num_events;
 var ticketChain;
 var WEI_CONVERSION = 10000000000000000;
 var TRANSAC_FEE = 10000;
@@ -19,9 +20,10 @@ function refresh() {
 
 // Refresh events (calls refreshMarket/refreshUser)
 function refreshEvents() {
-  events = [];
+  events = {};
   $("#availableEvents").empty();
   ticketChain.getNumEvents.call().then(function(count) {
+    num_events = count;
     for (var i = 0; i < count; i++)
       fetchEvent(i, count);
     return true;
@@ -32,10 +34,15 @@ function refreshEvents() {
 
 // Refresh market listing (calls refreshEventTickets)
 function refreshMarket() {
-  $("#market tbody").empty();
-  for (var i = 0; i < events.length; i++)
-    for (var j = 0; j < events[i].data[5].length; j++)
-      fetchTicket(events[i].data[5][j].valueOf(), '#market');
+  // Show empty text
+  if(!$.contains(document, $('#market tbody .empty')[0])){
+    $("#market tbody").empty();
+    $('#market tbody').append('<tr><td class="empty" colspan="3">' +
+      'There are no tickets on the market.</td></tr>');
+  }
+  for (var i = 0; i < num_events; i++)
+    for (var j = 0; j < events[i][5].length; j++)
+      fetchTicket(events[i][5][j].valueOf(), '#market');
 }
 
 // Refresh user (calls refreshUserTickets)
@@ -70,7 +77,7 @@ function refreshUserTickets() {
 function fetchTicket(ticket_id, elem, actions) {
   ticketChain.getTicket.call(ticket_id).then(function(ticket) {
     var buttons = "";
-    var event_name = events[ticket[1].valueOf()].data[1];
+    var event_name = events[ticket[1].valueOf()][1];
 
     // Check if on market
     if (ticket[3] && ticket[0] == account) {
@@ -86,11 +93,13 @@ function fetchTicket(ticket_id, elem, actions) {
         '<button class="btn" onclick="openPrint(' + ticket_id + ')">QR Code</button>';
     }
     // Add to table
-    if (elem == "#market")
+    if (elem == "#market"){
+      if($.contains(document, $('#market tbody .empty')[0]))
+        $("#market tbody").empty();
       addTableRow(elem, ticket_id, ['<img src="/images/ticket.png" class="ticket-icon" /> ' +
         '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons
       ]);
-    else if (elem == '#userTickets')
+    } else if (elem == '#userTickets')
       addTableRow(elem, ticket_id, ['<img src="/images/ticket.png" class="ticket-icon" /> ' +
         '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons
       ]);
@@ -105,10 +114,7 @@ function fetchEvent(event_id, total) {
   ticketChain.getEvent.call(event_id).then(function(item) {
     addEvent('#availableEvents', event_id, item[1], item[2].valueOf(),
       item[3].valueOf(), item[4].valueOf());
-    events.push({
-      id: event_id,
-      data: item
-    });
+    events[event_id] = item;
     // Load market/tickets after last event
     if (event_id == total - 1) {
       refreshMarket();

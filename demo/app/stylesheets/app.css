@@ -1,6 +1,7 @@
 /* General classes */
 body {
   font-family: "Open Sans", sans-serif;
+  margin-bottom: 40px;
 }
 button {
   font-size: 16px;
@@ -55,7 +56,7 @@ hr {
   font-weight: bold;
 }
 .userbox .details {
-  font-size: 12px;
+  font-size: 13px;
 }
 /* Events row */
 .events-row {
@@ -146,6 +147,7 @@ td.empty {
 .powered-by img {
   height: 20px;
 }
+/* Print page */
 .print-container {
   max-width: 400px;
   margin-left: initial;
@@ -155,6 +157,10 @@ td.empty {
 }
 .print-header {
   font-size: 20px;
+}
+#qrcode {
+  width: 200px;
+  height: 200px;
 }
 #time {
   font-size: 28px;
