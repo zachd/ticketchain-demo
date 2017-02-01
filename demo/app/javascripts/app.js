@@ -302,7 +302,6 @@ function showLoading() {
     title: 'Loading...',
     text: '<img src="/images/loading.gif" height="100" width="100">',
     showConfirmButton: false,
-    timer: 10000,
     html: true
   });
 }
