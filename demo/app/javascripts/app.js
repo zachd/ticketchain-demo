@@ -45,7 +45,6 @@ function refreshUserTickets() {
   ticketChain.getUser.call({
     from: account
   }).then(function(resp) {
-    $("#yourName").html(resp[0]);
     tickets = resp[1];
     refreshMyTickets();
     return true;
@@ -198,12 +197,13 @@ function newUser(name) {
     swal.showInputError("You need to write something!");
     return false
   }
-  swal("Hi " + name + "!", "Welcome to Ticketchain.");
   send(ticketChain.newUser, [name, {
       from: account
     }],
     function(resp) {
       setStatus("Transaction complete!");
+      $("#yourName").html(resp[0]);
+      swal("Hi " + name + "!", "Welcome to TicketChain.");
       // Initial refresh (if new)
       refresh();
       return true;
@@ -284,6 +284,12 @@ function error(e) {
 /**** MAIN WINDOW ONLOAD EVENT ****/
 
 window.onload = function() {
+  swal({
+    title: 'Loading...',
+    text: '<img src="images/loading.gif" height="100" width="100">',
+    showConfirmButton: false,
+    html: true
+  });
   web3.eth.getAccounts(function(err, accounts) {
     ticketChain = TicketChain.deployed();
 
@@ -320,8 +326,7 @@ window.onload = function() {
               text: "Please enter your name below.",
               type: "input",
               showCancelButton: true,
-              closeOnConfirm: false,
-              animation: "slide-from-top"
+              closeOnConfirm: false
             },
             function(input) {
               newUser(input);
@@ -330,6 +335,7 @@ window.onload = function() {
       } else {
         // Set user params
         $("#yourName").html(resp[0]);
+        swal.close();
         tickets = resp[1];
         // Initial refresh (if existing)
         refresh();
