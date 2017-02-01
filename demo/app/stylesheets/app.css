@@ -146,6 +146,21 @@ td.empty {
 .powered-by img {
   height: 20px;
 }
+.print-container {
+  max-width: 400px;
+  margin-left: initial;
+  text-align: center;
+  border: dashed 2px #999;
+  margin: 5px;
+}
+.print-header {
+  font-size: 20px;
+}
+#time {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 50px;
+}
 
 
 /* Mayflower theme */ 

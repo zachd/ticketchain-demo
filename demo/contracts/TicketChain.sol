@@ -88,6 +88,7 @@ contract TicketChain {
         bool x = owner_addr.send(price);
 
         // Set new owner of ticket
+        tickets[ticket_id].price = evnt.price;
         tickets[ticket_id].owner = msg.sender;
         tickets[ticket_id].on_market = false;
         user.ticket_ids.push(ticket_id);
