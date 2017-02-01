@@ -3,7 +3,7 @@
 <head>
   <title>TicketChain</title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="icon" href="/images/icon.png" type="image/png" />
+  <link href="/images/icon.png" rel="icon" type="image/png">
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
   <link href="./app.css" rel='stylesheet' type="text/css">
   <script src="./app.js">
@@ -22,7 +22,7 @@
             Welcome, <span id="yourName"></span>!
           </div>
           <div class="details">
-            <!--ID# <span id="yourAccountID"></span> -->Balance: <span id="yourBalance"></span>
+            Balance: <span id="yourBalance"></span>
           </div>
         </div>
       </div>
@@ -35,11 +35,12 @@
         <div id="availableEvents"></div>
       </div>
     </div>
-    <hr />
+    <hr>
+    
     <div class="row">
       <div class="col-md-6">
         <h2>Your Tickets</h2>
-        <table class="table table-striped" id="myTickets">
+        <table class="table table-striped" id="userTickets">
           <thead>
             <tr>
               <td>Event</td>
@@ -63,10 +64,9 @@
           <tbody></tbody>
         </table>
       </div>
-    </div>
-    <a class="btn btn-default" onclick="openValidator()">Open Ticket Validator</a>
-    <br /><br />
-    <div id="status" class="hidden-xs"></div>
+    </div><a class="btn btn-default" onclick="openValidator()">Open Ticket Validator</a><br>
+    <br>
+    <div class="hidden-xs" id="status"></div>
     <div class="powered-by">Powered by <img src="images/logo.png"></div>
   </div>
 </body>

@@ -17,7 +17,7 @@ function refresh() {
   refreshEvents();
 }
 
-// Refresh events
+// Refresh events (calls refreshMarket/refreshUser)
 function refreshEvents() {
   events = [];
   $("#availableEvents").empty();
@@ -30,28 +30,23 @@ function refreshEvents() {
   });
 }
 
-// Refresh market listing
+// Refresh market listing (calls refreshEventTickets)
 function refreshMarket() {
   $("#market tbody").empty();
   for (var i = 0; i < events.length; i++)
-    refreshEventTickets(events[i], '#market');
+    for (var j = 0; j < events[i].data[5].length; j++)
+      fetchTicket(events[i].data[5][j].valueOf(), '#market');
 }
 
-// Refresh event tickets
-function refreshEventTickets(event, elem) {
-  for (var i = 0; i < event.data[5].length; i++)
-    fetchTicket(event.data[5][i].valueOf(), elem);
-}
-
-// Refresh user
-function refreshUserTickets() {
+// Refresh user (calls refreshUserTickets)
+function refreshUser() {
   tickets = [];
   ticketChain.getUser.call({
     from: account
   }).then(function(resp) {
     tickets = resp[1];
-    $('#yourBalance').html(getBalance());
-    refreshMyTickets();
+    $('#yourBalance').html(showBalance());
+    refreshUserTickets();
     return true;
   }).catch(function(e) {
     error(e);
@@ -59,12 +54,13 @@ function refreshUserTickets() {
 }
 
 // Refresh user tickets
-function refreshMyTickets() {
-  $("#myTickets tbody").empty();
+function refreshUserTickets() {
+  $("#userTickets tbody").empty();
   for (var i = 0; i < tickets.length; i++)
-    fetchTicket(tickets[i].valueOf(), '#myTickets');
+    fetchTicket(tickets[i].valueOf(), '#userTickets');
   if (tickets.length == 0)
-    $('#myTickets tbody').append('<tr><td class="empty" colspan="3">You haven\'t purchased a ticket yet.</td></tr>');
+    $('#userTickets tbody').append('<tr><td class="empty" colspan="3">' +
+      'You haven\'t purchased a ticket yet.</td></tr>');
 }
 
 
@@ -82,9 +78,9 @@ function fetchTicket(ticket_id, elem, actions) {
     } else {
       // Show appropriate buttons
       if (elem == "#market")
-        buttons = '<button class="btn" onclick="buyTicket(' + ticket[1].valueOf() + ', \'' + event_name
-         + '\', ' + parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Buy Ticket</button>';
-      else if (elem == "#myTickets")
+        buttons = '<button class="btn" onclick="buyTicket(' + ticket[1].valueOf() + ', \'' + event_name +
+        '\', ' + parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Buy Ticket</button>';
+      else if (elem == "#userTickets")
         buttons = '<button class="btn" onclick="sellTicket(' + ticket_id + ', \'' + event_name +
         '\', ' + parseInt(ticket[2].valueOf()) + ')">Sell Ticket</button>' +
         '<button class="btn" onclick="openPrint(' + ticket_id + ')">QR Code</button>';
@@ -94,7 +90,7 @@ function fetchTicket(ticket_id, elem, actions) {
       addTableRow(elem, ticket_id, ['<img src="/images/ticket.png" class="ticket-icon" /> ' +
         '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons
       ]);
-    else if (elem == '#myTickets')
+    else if (elem == '#userTickets')
       addTableRow(elem, ticket_id, ['<img src="/images/ticket.png" class="ticket-icon" /> ' +
         '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons
       ]);
@@ -104,11 +100,11 @@ function fetchTicket(ticket_id, elem, actions) {
   });
 }
 
-
 // Fetch event
 function fetchEvent(event_id, total) {
   ticketChain.getEvent.call(event_id).then(function(item) {
-    addEvent('#availableEvents', event_id, item[1], item[2].valueOf(), item[3].valueOf(), item[4].valueOf());
+    addEvent('#availableEvents', event_id, item[1], item[2].valueOf(),
+      item[3].valueOf(), item[4].valueOf());
     events.push({
       id: event_id,
       data: item
@@ -116,7 +112,7 @@ function fetchEvent(event_id, total) {
     // Load market/tickets after last event
     if (event_id == total - 1) {
       refreshMarket();
-      refreshUserTickets();
+      refreshUser();
       // Hide loading screen if not validator
       if (alrt) {
         swal(alrt);
@@ -308,7 +304,7 @@ function addEvent(elem, event_id, name, price, num_tickets, num_sold) {
   $(elem).append(event);
   event.html('<div class="image"><img src="/images/events/' + name + '.png"><div class="details"><h3>' +
     name + '</h3><div class="price">' + showPrice(price) + '</div><button class="btn" onclick="buyTicket(' +
-    + event_id + ', \'' + name + '\', ' + parseInt(price) + ')">Purchase</button></div></div>');
+    +event_id + ', \'' + name + '\', ' + parseInt(price) + ')">Purchase</button></div></div>');
 }
 
 // Add item to table
@@ -329,7 +325,8 @@ function showLoading() {
     html: true
   });
 }
-// Open print screen
+
+// Open ticket validator
 function openValidator(ticket_id) {
   swal({
     title: 'Ticket Validator',
@@ -378,10 +375,12 @@ function getRandomId() {
   return num;
 }
 
-function getBalance() {
+// Return parsed balance
+function showBalance() {
   return '\u20AC' + (web3.eth.getBalance(account) / WEI_CONVERSION).toLocaleString() + '.00';
 }
 
+// Return parsed price
 function showPrice(price) {
   return price == 0 ? 'Free' : '\u20AC' + Math.floor(price / WEI_CONVERSION) + '.00';
 }
@@ -401,7 +400,7 @@ function error(e, error_msg) {
     showConfirmButton: false,
     timer: 1750
   });
-  setStatus("An error occured; see log.");
+  setStatus("An error occured.");
 }
 
 /**** MAIN WINDOW ONLOAD EVENT ****/
@@ -457,9 +456,7 @@ window.onload = function() {
       error(e);
     });
 
-    // Set account params
-    //document.getElementById("yourAccountID").innerHTML = id;
-    document.getElementById("yourBalance").innerHTML = getBalance();
-
+    // Show account balance
+    $('#yourBalance').html(showBalance());
   });
 }

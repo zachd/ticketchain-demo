@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>TicketChain</title>
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <link rel="icon" href="/images/icon.png" type="image/png" />
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../app.css" rel='stylesheet' type="text/css">
-    <script src="../app.js">
-    </script>
+  <title>TicketChain</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link href="/images/icon.png" rel="icon" type="image/png">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../app.css" rel='stylesheet' type="text/css">
+  <script src="../app.js">
+  </script>
 </head>
 <body>
   <div class="container">
@@ -19,28 +19,23 @@
       <div id="result"></div>
     </div>
     <div class="row">
-        <h3>Available Events:</h3>
-        <table class="table table-striped" id="availableEvents">
-          <thead>
-            <tr>
-              <td>Name</td>
-              <td>Price</td>
-              <td># Tickets</td>
-              <td># Sold</td>
-              <td>Actions</td>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+      <h3>Available Events:</h3>
+      <table class="table table-striped" id="availableEvents">
+        <thead>
+          <tr>
+            <td>Name</td>
+            <td>Price</td>
+            <td># Tickets</td>
+            <td># Sold</td>
+            <td>Actions</td>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
     <div class="row">
-        <h3>Create Event</h3>
-        <label for="event_name">Event Name:</label><input class="form-control" id="event_name" type="text">
-        <label for="event_price">Event Price:</label><input class="form-control" id="event_price" type="text">
-        <label for="event_num_tickets"># Tickets:</label><input class="form-control" id="event_num_tickets" type="text">
-        <button class="btn btn-primary btn-lg" id="newEvent" onclick="newEvent()">Create</button>
-    </div>
-    <br />
+      <h3>Create Event</h3><label for="event_name">Event Name:</label><input class="form-control" id="event_name" type="text"> <label for="event_price">Event Price:</label><input class="form-control" id="event_price" type="text"> <label for="event_num_tickets"># Tickets:</label><input class="form-control" id="event_num_tickets" type="text"> <button class="btn btn-primary btn-lg" id="newEvent" onclick="newEvent()">Create</button>
+    </div><br>
     <span id="status"></span>
   </div>
 </body>
