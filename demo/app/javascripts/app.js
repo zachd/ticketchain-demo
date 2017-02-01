@@ -7,27 +7,9 @@ var ticketChain;
 
 /**** REFRESH FUNCTIONS ****/
 
-// Refresh user
-function refreshUserTickets() {
-  tickets = [];
-  $("#yourName").empty();
-  ticketChain.getUser.call({
-    from: account
-  }).then(function(resp) {
-    $("#yourName").html(resp[0]);
-    tickets = resp[1];
-    refreshMyTickets();
-    return true;
-  }).catch(function(e) {
-    error(e);
-  });
-}
-
-// Refresh user tickets
-function refreshMyTickets() {
-  $("#myTickets tbody").empty();
-  for (var i = 0; i < tickets.length; i++)
-    fetchTicket(tickets[i].valueOf(), '#myTickets');
+// Main refresh (starts chain)
+function refresh() {
+  refreshEvents();
 }
 
 // Refresh events
@@ -54,6 +36,29 @@ function refreshMarket() {
 function refreshEventTickets(event, elem) {
   for (var i = 0; i < event.data[5].length; i++)
     fetchTicket(event.data[5][i].valueOf(), elem);
+}
+
+// Refresh user
+function refreshUserTickets() {
+  tickets = [];
+  $("#yourName").empty();
+  ticketChain.getUser.call({
+    from: account
+  }).then(function(resp) {
+    $("#yourName").html(resp[0]);
+    tickets = resp[1];
+    refreshMyTickets();
+    return true;
+  }).catch(function(e) {
+    error(e);
+  });
+}
+
+// Refresh user tickets
+function refreshMyTickets() {
+  $("#myTickets tbody").empty();
+  for (var i = 0; i < tickets.length; i++)
+    fetchTicket(tickets[i].valueOf(), '#myTickets');
 }
 
 
@@ -96,9 +101,11 @@ function fetchEvent(event_id, total) {
       id: event_id,
       data: item
     });
-    // Load market after last event
-    if (event_id == total - 1)
+    // Load market/tickets after last event
+    if (event_id == total - 1){
+      refreshUserTickets();
       refreshMarket();
+    }
     return true;
   }).catch(function(e) {
     error(e);
@@ -119,8 +126,7 @@ function buyTicket(event_id, price, ticket_id) {
     }],
     function(resp) {
       setStatus("Transaction complete!");
-      refreshEvents();
-      refreshUserTickets();
+      refresh();
       return true;
     }
   );
@@ -134,8 +140,7 @@ function sellTicket(ticket_id) {
     }],
     function() {
       setStatus("Transaction complete!");
-      refreshEvents();
-      refreshUserTickets();
+      refresh();
       return true;
     }
   );
@@ -148,8 +153,7 @@ function cancelSale(ticket_id) {
     }],
     function() {
       setStatus("Transaction complete!");
-      refreshEvents();
-      refreshUserTickets();
+      refresh();
       return true;
     }
   );
@@ -181,7 +185,7 @@ function newEvent() {
     }],
     function(resp) {
       setStatus("Transaction complete!");
-      refreshEvents();
+      refresh();
       return true;
     }
   );
@@ -200,7 +204,8 @@ function newUser(name) {
     }],
     function(resp) {
       setStatus("Transaction complete!");
-      refreshUserTickets();
+      // Initial refresh (if new)
+      refresh();
       return true;
     }
   );
@@ -302,9 +307,6 @@ window.onload = function() {
     if (getUrlParameter('function') == "validate")
       validateTicket(getUrlParameter('ticket'), account);
 
-    // Refresh events
-    refreshEvents();
-
     // Check user exists and refresh users
     ticketChain.getUser.call({
       from: account
@@ -329,8 +331,8 @@ window.onload = function() {
         // Set user params
         $("#yourName").html(resp[0]);
         tickets = resp[1];
-        // Refresh users and tickets
-        refreshUserTickets();
+        // Initial refresh (if existing)
+        refresh();
       }
       return true;
     }).catch(function(e) {
