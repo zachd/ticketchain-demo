@@ -168,6 +168,7 @@ function buyTicket(event_id, event_name, price, ticket_id) {
           '</div>',
     html: true,
     confirmButtonText: 'Purchase',
+    closeOnConfirm: false,
     showCancelButton: true
   }, function() {
     showLoading();
