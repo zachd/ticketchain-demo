@@ -87,6 +87,9 @@ hr {
   .usercolumn {
     text-align: center;
   }
+  .payment-panel .panel-title {
+    font-size: 16px;
+  }
 }
 /* Zoom: http://stackoverflow.com/a/15757620 */
 .event img {
@@ -127,6 +130,39 @@ td.empty {
   height: 17px;
   vertical-align: text-top;
   margin-right: 3px;
+}
+/* Payment Screen */
+.payment-panel {
+  margin-top: 15px;
+}
+.payment-panel label {
+  font-size: 14px;
+}
+.payment-panel .cards {
+  width: 100%;
+}
+.payment-panel .card-icon {
+  height: 20px;
+}
+.payment-panel .panel-heading .row {
+  display: table;
+  table-layout: fixed;
+}
+.payment-panel .panel-heading .col-xs-6 {
+  display: table-cell;
+  vertical-align: middle;
+  float: none;
+}
+.payment-panel .panel-title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: left;
+}
+.sweet-alert .payment-panel input {
+  display: block;
+  height: 34px;
+  margin-top: 0px;
+  font-size: inherit;
 }
 /* Bottom bar */
 #status {

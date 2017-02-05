@@ -140,27 +140,58 @@ function buyTicket(event_id, event_name, price, ticket_id) {
   var on_market = ticket_id !== undefined;
   ticket_id = on_market ? ticket_id : 0;
   price += TRANSAC_FEE;
-  showLoading();
-  send(ticketChain.buyTicket, [event_id, ticket_id, on_market, {
-      from: account,
-      value: price
-    }],
-    function(resp) {
-      setStatus("Transaction complete!");
-      alrt = {
-        title: "Success!",
-        text: "You just bought a ticket to " + event_name +
-          " for " + showPrice(price - TRANSAC_FEE) + "!",
-        type: "success",
-        showConfirmButton: false,
-        timer: 1750
-      };
-      refresh();
-      return true;
-    },
-    "An error occurred. " + (on_market ? "This ticket might already be sold." :
-      "This event might be sold out.")
-  );
+  swal({
+    title: "Ticket Purchase",
+    text: '1 x ' + event_name + ' ticket for <strong>' + showPrice(price) + '</strong>' +
+          '<div class="panel panel-default payment-panel">' +
+            '<div class="panel-heading">' +
+              '<div class="row">' + 
+                '<div class="col-xs-6 panel-title">Payment Details</div>' +
+                '<div class="col-xs-6"><img class="pull-right cards" src="/images/cards.png"></div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="panel-body">' +
+              '<div class="row"><div class="col-xs-12"><div class="form-group">' +
+                '<label>CARD NUMBER</label><div class="input-group">' +
+                  '<input type="tel" class="form-control" value="4242 4242 4242 4242" disabled>' +
+                  '<span class="input-group-addon"><img class="card-icon" src="/images/card-icon.png"></span>' +
+                '</div>' +
+              '</div></div></div>' +
+              '<div class="row"><div class="col-xs-7"><div class="form-group">' +
+                '<label>EXP</span> DATE</label><input type="tel" class="form-control" value="01/18" disabled>' +
+              '</div></div>' +
+              '<div class="col-xs-5 pull-right"><div class="form-group">' +
+                '<label>CV CODE</label><input type="tel" class="form-control" value="123" disabled>' +
+              '</div></div>' +
+              '<div class="col-xs-5 pull-right"><img class="stripe pull-right" src="/images/stripe.png"></div>' +
+            '</div>' +
+          '</div>',
+    html: true,
+    confirmButtonText: 'Purchase',
+    showCancelButton: true
+  }, function() {
+    showLoading();
+    send(ticketChain.buyTicket, [event_id, ticket_id, on_market, {
+        from: account,
+        value: price
+      }],
+      function(resp) {
+        setStatus("Transaction complete!");
+        alrt = {
+          title: "Success!",
+          text: "You just bought a ticket to " + event_name +
+            " for " + showPrice(price - TRANSAC_FEE) + "!",
+          type: "success",
+          showConfirmButton: false,
+          timer: 1750
+        };
+        refresh();
+        return true;
+      },
+      "An error occurred. " + (on_market ? "This ticket might already be sold." :
+        "This event might be sold out.")
+    );
+  });
 }
 
 // Sell ticket
