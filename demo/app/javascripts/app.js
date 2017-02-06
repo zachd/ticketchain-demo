@@ -7,6 +7,7 @@ var num_events;
 var ticketChain;
 var events = {};
 var WEI_CONVERSION = 10000000000000000;
+var TICKETS_LEFT_TEXT = 20;
 var TRANSAC_FEE = 10000;
 var RESALE_LIMIT = 1.5;
 
@@ -79,12 +80,12 @@ function fetchTicket(ticket_id, elem, actions) {
 
     // Check if on market
     if (ticket[3] && ticket[0] == account) {
-      buttons = '<button class="btn btn-default" onclick="cancelSale(' + ticket_id + ')">Cancel <span class="hidden-xs">Sale</span></button>';
+      buttons = '<button class="btn btn-default" onclick="cancelSale(' + ticket_id + ')">Cancel<span class="hidden-xs"> Sale</span></button>';
     } else {
       // Show appropriate buttons
       if (elem == "#market")
         buttons = '<button class="btn btn-default" onclick="buyTicket(' + ticket[1].valueOf() + ', \'' + event_name +
-        '\', ' + parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Buy</button>';
+        '\', ' + parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Buy<span class="hidden-xs"> Ticket</span></button>';
       else if (elem == "#userTickets")
         buttons = '<button class="btn btn-default" onclick="sellTicket(' + ticket_id + ', \'' + event_name +
         '\', ' + parseInt(ticket[2].valueOf()) + ')">Sell <span class="hidden-xs">Ticket</span></button>' +
@@ -116,6 +117,11 @@ function fetchEvent(event_id, total) {
     var sold_out = parseInt(item[4].valueOf()) >= parseInt(item[3].valueOf());
     $('#event-' + event_id).toggleClass('sold-out', sold_out);
     $('#event-' + event_id + ' .btn').attr("disabled", sold_out);
+    // Show low tickets left
+    var tickets_left = parseInt(item[3].valueOf()) - parseInt(item[4].valueOf());
+    if(tickets_left <= TICKETS_LEFT_TEXT)
+      $('#event-' + event_id + ' .tickets-left').text(tickets_left 
+        + ' ticket' + (tickets_left == 1 ? '' : 's') + ' left!');
     // Update stored details
     events[event_id] = item;
     // Load market/tickets after last event
@@ -342,7 +348,7 @@ function addEvent(elem, event_id, name, price) {
   var event = $('<div>').attr('class', 'event col-sm-6 col-md-3').attr('id', 'event-' + event_id);
   $(elem).append(event);
   event.html('<div class="image"><img src="/images/events/' + name + '.png"><img class="sold-out-img" src="/images/sold-out.png"><div class="details"><h3>' +
-    name + '</h3><div class="price">' + showPrice(price) + '</div><button class="btn btn-default" onclick="buyTicket(' +
+    name + '</h3><div class="price"><span class="price-text">' + showPrice(price) + '</span><span class="tickets-left"></span></div><button class="btn btn-default" onclick="buyTicket(' +
     +event_id + ', \'' + name + '\', ' + parseInt(price) + ')">Buy</button></div></div>');
 }
 

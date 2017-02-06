@@ -115,8 +115,16 @@ hr {
   top: 0;
   display: block;
 }
-.event.sold-out .price {
+.event.sold-out .price-text {
   text-decoration: line-through;
+}
+.event .tickets-left {
+  margin-left: 5px;
+  color: #b91f37;
+}
+.event.sold-out:hover img {
+  -webkit-transform: none;
+   transform: none;
 }
 .event:hover img {
   -webkit-transform: scale(1.03) rotate(0.5deg);
