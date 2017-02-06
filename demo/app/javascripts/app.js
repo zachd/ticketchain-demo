@@ -146,8 +146,8 @@ function buyTicket(event_id, event_name, price, ticket_id) {
           '<div class="panel panel-default payment-panel">' +
             '<div class="panel-heading">' +
               '<div class="row">' + 
-                '<div class="col-xs-6 panel-title">Payment Details</div>' +
-                '<div class="col-xs-6"><img class="pull-right cards" src="/images/cards.png"></div>' +
+                '<div class="col-xs-8 col-md-6 panel-title">Payment Details</div>' +
+                '<div class="col-xs-4 col-md-6 panel-icons"><img class="pull-right cards" src="/images/cards.png"></div>' +
               '</div>' +
             '</div>' +
             '<div class="panel-body">' +
@@ -168,6 +168,7 @@ function buyTicket(event_id, event_name, price, ticket_id) {
           '</div>',
     html: true,
     confirmButtonText: 'Purchase',
+    cancelButtonText: 'Back',
     closeOnConfirm: false,
     showCancelButton: true
   }, function() {
@@ -368,12 +369,13 @@ function showLoading() {
 function openValidator(ticket_id) {
   swal({
     title: 'Ticket Validator',
-    text: 'This verifies the QR code on your ticket with <em>TicketChain</em>.<br />Install one of the apps below and click Open Scanner.<br /><br />' +
+    text: 'This verifies your ticket with <em>TicketChain</em>.<br />Install one of the apps below and tap <strong>Scan</strong>.<br /><br />' +
       '<a href="https://play.google.com/store/apps/details?id=com.google.zxing.client.android" target="_blank"><img src="/images/playstore.png"></a> ' +
       '<a href="https://itunes.apple.com/ie/app/qrafter-qr-code-reader-generator/id416098700" target="_blank"><img src="/images/appstore.svg"></a><br />' +
       '<strong>Barcode Scanner</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
       '<strong>Qrafter</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-    confirmButtonText: "Open Scanner",
+    confirmButtonText: "Scan",
+    cancelButtonText: "Back",
     showCancelButton: true,
     html: true
   }, function() {
