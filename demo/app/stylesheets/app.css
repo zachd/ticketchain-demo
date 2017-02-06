@@ -47,7 +47,7 @@ hr {
 }
 .userbox img {
   float: left;
-  width: 42px;
+  width: 40px;
   height: 40px;
 }
 .userbox .name {
@@ -74,18 +74,18 @@ hr {
   margin: 0px;
 }
 @media screen and (max-width:768px){
-  #logo {
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
   .event {
     margin-bottom: 5px;
   }
   .ticket .btn {
-    padding: 3px 6px;
+    padding: 5px 10px;
   }
-  .usercolumn {
-    text-align: center;
+  .userbox .name {
+    font-size: 14px;
+  }
+  .userbox img {
+    width: 36px;
+    height: 36px;
   }
   .payment-panel .panel-title {
     font-size: 16px !important;
@@ -94,10 +94,10 @@ hr {
     background-image: url(/images/icon-external.png);
     background-size: 18px;
     background-repeat: no-repeat;
-    background-position: 4px 4px;
+    background-position: 7px 6px;
     font-size: 0;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
   }
 }
 /* Zoom: http://stackoverflow.com/a/15757620 */
@@ -226,11 +226,39 @@ body.mayflower {
 }
 .mayflower #logo {
   margin: 20px;
-  background-image: url('images/mayflower-logo.png');
-  background-size: 245px 55px;
+  background: url('images/mayflower-logo.png') no-repeat;
+  background-size: contain;
   height: 55px;
   width: 245px;
 }
 .mayflower .userbox {
   background-color: #FF8600;
+}
+
+/* 3 Arena theme */
+body.threearena {
+  background-color: black;
+}
+.threearena .header {
+  background: url('images/3arena-header.png') no-repeat;
+  padding: 15px 20px;
+}
+.threearena .content {
+  background-color: white;
+}
+.threearena #logo {
+  background: url('images/3arena-logo.png') no-repeat;
+  background-size: contain;
+  height: 97px;
+  width: 165px;
+}
+
+@media screen and (max-width:768px){
+  .threearena #logo {
+    width: 82px;
+    height: 40px;
+  }
+}
+.threearena .userbox {
+  background-color: white;
 }
