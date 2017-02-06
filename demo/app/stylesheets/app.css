@@ -226,7 +226,7 @@ body.mayflower {
 }
 .mayflower #logo {
   margin: 20px;
-  background: url('images/mayflower-logo.png') no-repeat;
+  background: url('images/themes/mayflower-logo.png') no-repeat;
   background-size: contain;
   height: 55px;
   width: 245px;
@@ -240,14 +240,14 @@ body.threearena {
   background-color: black;
 }
 .threearena .header {
-  background: url('images/3arena-header.png') no-repeat;
+  background: url('images/themes/3arena-header.png') no-repeat;
   padding: 15px 20px;
 }
 .threearena .content {
   background-color: white;
 }
 .threearena #logo {
-  background: url('images/3arena-logo.png') no-repeat;
+  background: url('images/themes/3arena-logo.png') no-repeat;
   background-size: contain;
   height: 97px;
   width: 165px;

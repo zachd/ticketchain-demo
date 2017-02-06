@@ -96,11 +96,11 @@ function fetchTicket(ticket_id, elem, actions) {
     if (elem == "#market"){
       if($.contains(document, $('#market tbody .empty')[0]))
         $("#market tbody").empty();
-      addTableRow(elem, ticket_id, ['<img src="/images/icon-ticket.png" class="ticket-icon" /> ' +
+      addTableRow(elem, ticket_id, ['<img src="/images/icons/icon-ticket.png" class="ticket-icon" /> ' +
         '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons
       ]);
     } else if (elem == '#userTickets')
-      addTableRow(elem, ticket_id, ['<img src="/images/icon-ticket.png" class="ticket-icon" /> ' +
+      addTableRow(elem, ticket_id, ['<img src="/images/icons/icon-ticket.png" class="ticket-icon" /> ' +
         '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons
       ]);
     return true;
@@ -147,23 +147,27 @@ function buyTicket(event_id, event_name, price, ticket_id) {
             '<div class="panel-heading">' +
               '<div class="row">' + 
                 '<div class="col-xs-8 col-md-6 panel-title">Payment Details</div>' +
-                '<div class="col-xs-4 col-md-6 panel-icons"><img class="pull-right cards" src="/images/creditcards.png"></div>' +
+                '<div class="col-xs-4 col-md-6 panel-icons"><img class="pull-right cards" src="/images/icons/icon-colouredcards.png"></div>' +
               '</div>' +
             '</div>' +
             '<div class="panel-body">' +
-              '<div class="row"><div class="col-xs-12"><div class="form-group">' +
-                '<label>CARD NUMBER</label><div class="input-group">' +
+              '<div class="row">' +
+                '<div class="col-xs-12"><div class="form-group">' +
+                  '<label>CARD NUMBER</label><div class="input-group">' +
                   '<input type="tel" class="form-control" value="4242 4242 4242 4242" disabled>' +
-                  '<span class="input-group-addon"><img class="card-icon" src="/images/icon-card.png"></span>' +
+                  '<span class="input-group-addon"><img class="card-icon" src="/images/icons/icon-card.png"></span>' +
+                  '</div></div>' +
                 '</div>' +
-              '</div></div></div>' +
-              '<div class="row"><div class="col-xs-7"><div class="form-group">' +
-                '<label>EXP</span> DATE</label><input type="tel" class="form-control" value="01/18" disabled>' +
-              '</div></div>' +
-              '<div class="col-xs-5 pull-right"><div class="form-group">' +
-                '<label>CV CODE</label><input type="tel" class="form-control" value="123" disabled>' +
-              '</div></div>' +
-              '<div class="col-xs-5 pull-right"><img class="stripe pull-right" src="/images/stripe-logo.png"></div>' +
+              '</div>' +
+              '<div class="row">' +
+                '<div class="col-xs-7"><div class="form-group">' +
+                  '<label>EXP DATE</label><input type="tel" class="form-control" value="01/18" disabled>' +
+                '</div></div>' +
+                '<div class="col-xs-5 pull-right"><div class="form-group">' +
+                  '<label>CV CODE</label><input type="tel" class="form-control" value="123" disabled>' +
+                '</div></div>' +
+                '<div class="col-xs-5 pull-right"><img class="stripe pull-right" src="/images/stripe-logo.png"></div>' +
+              '</div>' +
             '</div>' +
           '</div>',
     html: true,
