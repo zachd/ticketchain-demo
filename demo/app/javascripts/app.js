@@ -81,16 +81,16 @@ function fetchTicket(ticket_id, elem, actions) {
 
     // Check if on market
     if (ticket[3] && ticket[0] == account) {
-      buttons = '<button class="btn" onclick="cancelSale(' + ticket_id + ')">Cancel Sale</button>';
+      buttons = '<button class="btn btn-default" onclick="cancelSale(' + ticket_id + ')">Cancel <span class="hidden-xs">Sale</span></button>';
     } else {
       // Show appropriate buttons
       if (elem == "#market")
-        buttons = '<button class="btn" onclick="buyTicket(' + ticket[1].valueOf() + ', \'' + event_name +
-        '\', ' + parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Buy Ticket</button>';
+        buttons = '<button class="btn btn-default" onclick="buyTicket(' + ticket[1].valueOf() + ', \'' + event_name +
+        '\', ' + parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Purchase</button>';
       else if (elem == "#userTickets")
-        buttons = '<button class="btn" onclick="sellTicket(' + ticket_id + ', \'' + event_name +
+        buttons = '<button class="btn btn-default" onclick="sellTicket(' + ticket_id + ', \'' + event_name +
         '\', ' + parseInt(ticket[2].valueOf()) + ')">Sell <span class="hidden-xs">Ticket</span></button>' +
-        '<button class="btn qr-code" onclick="openPrint(' + ticket_id + ')">QR Code</button>';
+        '<button class="btn btn-default qr-code" onclick="openPrint(' + ticket_id + ')">QR Code</button>';
     }
     // Add to table
     if (elem == "#market"){
@@ -342,7 +342,7 @@ function addEvent(elem, event_id, name, price, num_tickets, num_sold) {
   var event = $('<div>').attr('class', 'event col-sm-6 col-md-3');
   $(elem).append(event);
   event.html('<div class="image"><img src="/images/events/' + name + '.png"><div class="details"><h3>' +
-    name + '</h3><div class="price">' + showPrice(price) + '</div><button class="btn" onclick="buyTicket(' +
+    name + '</h3><div class="price">' + showPrice(price) + '</div><button class="btn btn-default" onclick="buyTicket(' +
     +event_id + ', \'' + name + '\', ' + parseInt(price) + ')">Purchase</button></div></div>');
 }
 
