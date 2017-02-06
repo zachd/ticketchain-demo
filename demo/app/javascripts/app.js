@@ -123,7 +123,7 @@ function fetchEvent(event_id, total) {
       if (alrt) {
         swal(alrt);
         alrt = null;
-      } else if ($('.sweet-alert h2').text() == 'Loading...')
+      } else if ($('.swal2-title').text() == 'Loading...')
         swal.close();
     }
     return true;
@@ -142,7 +142,7 @@ function buyTicket(event_id, event_name, price, ticket_id) {
   price += TRANSAC_FEE;
   swal({
     title: "Ticket Purchase",
-    text: '1 x ' + event_name + ' ticket for <strong>' + showPrice(price) + '</strong>' +
+    html: '1 x ' + event_name + ' ticket for <strong>' + showPrice(price) + '</strong>' +
           '<div class="panel panel-default payment-panel">' +
             '<div class="panel-heading">' +
               '<div class="row">' + 
@@ -170,12 +170,10 @@ function buyTicket(event_id, event_name, price, ticket_id) {
               '</div>' +
             '</div>' +
           '</div>',
-    html: true,
     confirmButtonText: 'Purchase',
     cancelButtonText: 'Back',
-    closeOnConfirm: false,
     showCancelButton: true
-  }, function() {
+  }).then(function() {
     showLoading();
     send(ticketChain.buyTicket, [event_id, ticket_id, on_market, {
         from: account,
@@ -205,23 +203,22 @@ function sellTicket(ticket_id, event_name, orig_price) {
   swal({
       title: "Sell Ticket",
       text: "Enter a resale price for your " + event_name + " ticket.",
-      type: "input",
+      input: "text",
       showCancelButton: true,
-      closeOnConfirm: false
-    },
+      inputValidator: function (input) {
+        return new Promise(function (resolve, reject) {
+          var max_price = orig_price * RESALE_LIMIT;
+          if (input === "" || isNaN(input) ||
+              parseInt(input) < 0 || input.length > 10)
+            reject("Amount invalid! Please try again.");
+          if (parseInt(input) > (max_price / WEI_CONVERSION))
+            reject('Ticket resale is limited to a ' + ((RESALE_LIMIT - 1) * 100) +
+              '% markup (' + showPrice(max_price) + ')');
+          resolve();
+        })
+      }
+    }).then(
     function(input) {
-      if (input === false) return false;
-      var max_price = orig_price * RESALE_LIMIT;
-      if (input === "" || isNaN(input) ||
-        parseInt(input) < 0 || input.length > 10) {
-        swal.showInputError("Amount invalid! Please try again.");
-        return false
-      }
-      if (parseInt(input) > (max_price / WEI_CONVERSION)) {
-        swal.showInputError('Ticket resale is limited to a ' + ((RESALE_LIMIT - 1) * 100) +
-          '% markup (' + showPrice(max_price) + ')');
-        return false
-      }
       showLoading();
       send(ticketChain.sellTicket, [ticket_id, parseInt(input) * WEI_CONVERSION, {
           from: account
@@ -299,11 +296,6 @@ function newEvent() {
 
 // Create user
 function newUser(name) {
-  if (name === false) return false;
-  if (name === "") {
-    swal.showInputError("Please enter a valid name");
-    return false
-  }
   swal({
     title: "Hi " + name + "!",
     text: "Welcome to TicketChain.",
@@ -363,9 +355,8 @@ function addTableRow(elem, item_id, attrs) {
 function showLoading() {
   swal({
     title: 'Loading...',
-    text: '<img src="/images/loading.gif" height="100" width="100">',
-    showConfirmButton: false,
-    html: true
+    html: '<img src="/images/loading.gif" height="100" width="100">',
+    showConfirmButton: false
   });
 }
 
@@ -373,16 +364,15 @@ function showLoading() {
 function openValidator(ticket_id) {
   swal({
     title: 'Ticket Validator',
-    text: 'This verifies a digital ticket with <em>TicketChain</em>.<br />Install one of the apps below and tap <strong>Scan</strong>.<br /><br />' +
+    html: 'This verifies a digital ticket with <em>TicketChain</em>.<br />Install one of the apps below and tap <strong>Scan</strong>.<br /><br />' +
       '<a href="https://play.google.com/store/apps/details?id=com.google.zxing.client.android" target="_blank"><img src="/images/playstore-logo.png"></a> ' +
       '<a href="https://itunes.apple.com/ie/app/qrafter-qr-code-reader-generator/id416098700" target="_blank"><img src="/images/appstore-logo.svg"></a><br />' +
       '<strong>Barcode Scanner</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
       '<strong>Qrafter</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
     confirmButtonText: "Scan",
     cancelButtonText: "Back",
-    showCancelButton: true,
-    html: true
-  }, function() {
+    showCancelButton: true
+  }).then(function() {
     window.open("zxing://scan/?ret=" + encodeURIComponent(location.protocol + '//' +
       location.host + location.pathname + "?id=" + id + "&function=validate&ticket={CODE}"));
   });
@@ -450,6 +440,9 @@ function error(e, error_msg) {
 /**** MAIN WINDOW ONLOAD EVENT ****/
 
 window.onload = function() {
+  swal.setDefaults({
+    reverseButtons: true
+  });
   showLoading();
   web3.eth.getAccounts(function(err, accounts) {
     ticketChain = TicketChain.deployed();
@@ -478,16 +471,20 @@ window.onload = function() {
           newUser("Admin");
         else
           swal({
-              title: "Welcome!",
-              text: "Please enter your name below.",
-              type: "input",
-              closeOnConfirm: false,
-              closeOnCancel: false
-            },
-            function(input) {
-              newUser(input);
+            title: "Welcome!",
+            text: "Please enter your name below.",
+            input: "text",
+            allowOutsideClick: false,
+            inputValidator: function (input) {
+              return new Promise(function (resolve, reject) {
+                if (input === "")
+                  reject("Please enter a valid name");
+                resolve();
+              })
             }
-          );
+          }).then(function(input) {
+            newUser(input);
+          });
       } else {
         // Set user params
         $("#yourName").html(resp[0]);
