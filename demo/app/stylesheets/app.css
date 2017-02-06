@@ -90,6 +90,15 @@ hr {
   .payment-panel .panel-title {
     font-size: 16px !important;
   }
+  .ticket .qr-code {
+    background-image: url(/images/icon-external.png);
+    background-size: 18px;
+    background-repeat: no-repeat;
+    background-position: 4px 4px;
+    font-size: 0;
+    width: 28px;
+    height: 28px;
+  }
 }
 /* Zoom: http://stackoverflow.com/a/15757620 */
 .event img {

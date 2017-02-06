@@ -89,18 +89,18 @@ function fetchTicket(ticket_id, elem, actions) {
         '\', ' + parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Buy Ticket</button>';
       else if (elem == "#userTickets")
         buttons = '<button class="btn" onclick="sellTicket(' + ticket_id + ', \'' + event_name +
-        '\', ' + parseInt(ticket[2].valueOf()) + ')">Sell Ticket</button>' +
-        '<button class="btn" onclick="openPrint(' + ticket_id + ')">QR Code</button>';
+        '\', ' + parseInt(ticket[2].valueOf()) + ')">Sell <span class="hidden-xs">Ticket</span></button>' +
+        '<button class="btn qr-code" onclick="openPrint(' + ticket_id + ')">QR Code</button>';
     }
     // Add to table
     if (elem == "#market"){
       if($.contains(document, $('#market tbody .empty')[0]))
         $("#market tbody").empty();
-      addTableRow(elem, ticket_id, ['<img src="/images/ticket.png" class="ticket-icon" /> ' +
+      addTableRow(elem, ticket_id, ['<img src="/images/icon-ticket.png" class="ticket-icon" /> ' +
         '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons
       ]);
     } else if (elem == '#userTickets')
-      addTableRow(elem, ticket_id, ['<img src="/images/ticket.png" class="ticket-icon" /> ' +
+      addTableRow(elem, ticket_id, ['<img src="/images/icon-ticket.png" class="ticket-icon" /> ' +
         '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons
       ]);
     return true;
@@ -147,14 +147,14 @@ function buyTicket(event_id, event_name, price, ticket_id) {
             '<div class="panel-heading">' +
               '<div class="row">' + 
                 '<div class="col-xs-8 col-md-6 panel-title">Payment Details</div>' +
-                '<div class="col-xs-4 col-md-6 panel-icons"><img class="pull-right cards" src="/images/cards.png"></div>' +
+                '<div class="col-xs-4 col-md-6 panel-icons"><img class="pull-right cards" src="/images/creditcards.png"></div>' +
               '</div>' +
             '</div>' +
             '<div class="panel-body">' +
               '<div class="row"><div class="col-xs-12"><div class="form-group">' +
                 '<label>CARD NUMBER</label><div class="input-group">' +
                   '<input type="tel" class="form-control" value="4242 4242 4242 4242" disabled>' +
-                  '<span class="input-group-addon"><img class="card-icon" src="/images/card-icon.png"></span>' +
+                  '<span class="input-group-addon"><img class="card-icon" src="/images/icon-card.png"></span>' +
                 '</div>' +
               '</div></div></div>' +
               '<div class="row"><div class="col-xs-7"><div class="form-group">' +
@@ -163,7 +163,7 @@ function buyTicket(event_id, event_name, price, ticket_id) {
               '<div class="col-xs-5 pull-right"><div class="form-group">' +
                 '<label>CV CODE</label><input type="tel" class="form-control" value="123" disabled>' +
               '</div></div>' +
-              '<div class="col-xs-5 pull-right"><img class="stripe pull-right" src="/images/stripe.png"></div>' +
+              '<div class="col-xs-5 pull-right"><img class="stripe pull-right" src="/images/stripe-logo.png"></div>' +
             '</div>' +
           '</div>',
     html: true,
@@ -370,8 +370,8 @@ function openValidator(ticket_id) {
   swal({
     title: 'Ticket Validator',
     text: 'This verifies your ticket with <em>TicketChain</em>.<br />Install one of the apps below and tap <strong>Scan</strong>.<br /><br />' +
-      '<a href="https://play.google.com/store/apps/details?id=com.google.zxing.client.android" target="_blank"><img src="/images/playstore.png"></a> ' +
-      '<a href="https://itunes.apple.com/ie/app/qrafter-qr-code-reader-generator/id416098700" target="_blank"><img src="/images/appstore.svg"></a><br />' +
+      '<a href="https://play.google.com/store/apps/details?id=com.google.zxing.client.android" target="_blank"><img src="/images/playstore-logo.png"></a> ' +
+      '<a href="https://itunes.apple.com/ie/app/qrafter-qr-code-reader-generator/id416098700" target="_blank"><img src="/images/appstore-logo.svg"></a><br />' +
       '<strong>Barcode Scanner</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
       '<strong>Qrafter</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
     confirmButtonText: "Scan",
