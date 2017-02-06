@@ -9,8 +9,9 @@ module.exports = {
       "javascripts/app.js"
     ],
     "app.css": [
-      "stylesheets/app.css",
-      "stylesheets/sweetalert2.min.css"
+      "stylesheets/bootstrap.min.css",
+      "stylesheets/sweetalert2.min.css",
+      "stylesheets/app.css"
     ],
     "images/": "images/"
   },

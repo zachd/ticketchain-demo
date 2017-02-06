@@ -3,9 +3,9 @@ var accounts;
 var account;
 var tickets;
 var alrt;
-var events;
 var num_events;
 var ticketChain;
+var events = {};
 var WEI_CONVERSION = 10000000000000000;
 var TRANSAC_FEE = 10000;
 var RESALE_LIMIT = 1.5;
@@ -20,8 +20,6 @@ function refresh() {
 
 // Refresh events (calls refreshMarket/refreshUser)
 function refreshEvents() {
-  events = {};
-  $("#availableEvents").empty();
   ticketChain.getNumEvents.call().then(function(count) {
     num_events = count;
     for (var i = 0; i < count; i++)
@@ -86,7 +84,7 @@ function fetchTicket(ticket_id, elem, actions) {
       // Show appropriate buttons
       if (elem == "#market")
         buttons = '<button class="btn btn-default" onclick="buyTicket(' + ticket[1].valueOf() + ', \'' + event_name +
-        '\', ' + parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Purchase</button>';
+        '\', ' + parseInt(ticket[2].valueOf()) + ', ' + ticket_id + ')">Buy</button>';
       else if (elem == "#userTickets")
         buttons = '<button class="btn btn-default" onclick="sellTicket(' + ticket_id + ', \'' + event_name +
         '\', ' + parseInt(ticket[2].valueOf()) + ')">Sell <span class="hidden-xs">Ticket</span></button>' +
@@ -112,8 +110,13 @@ function fetchTicket(ticket_id, elem, actions) {
 // Fetch event
 function fetchEvent(event_id, total) {
   ticketChain.getEvent.call(event_id).then(function(item) {
-    addEvent('#availableEvents', event_id, item[1], item[2].valueOf(),
-      item[3].valueOf(), item[4].valueOf());
+    if(events[event_id] === undefined)
+      addEvent('#availableEvents', event_id, item[1], item[2].valueOf());
+    // Check if sold out
+    var sold_out = parseInt(item[4].valueOf()) >= parseInt(item[3].valueOf());
+    $('#event-' + event_id).toggleClass('sold-out', sold_out);
+    $('#event-' + event_id + ' .btn').attr("disabled", sold_out);
+    // Update stored details
     events[event_id] = item;
     // Load market/tickets after last event
     if (event_id == total - 1) {
@@ -195,6 +198,7 @@ function buyTicket(event_id, event_name, price, ticket_id) {
       "An error occurred. " + (on_market ? "This ticket might already be sold." :
         "This event might be sold out.")
     );
+    return true;
   });
 }
 
@@ -334,12 +338,12 @@ function send(endpoint, vars, callback, error_msg) {
 }
 
 // Add item to events
-function addEvent(elem, event_id, name, price, num_tickets, num_sold) {
-  var event = $('<div>').attr('class', 'event col-sm-6 col-md-3');
+function addEvent(elem, event_id, name, price) {
+  var event = $('<div>').attr('class', 'event col-sm-6 col-md-3').attr('id', 'event-' + event_id);
   $(elem).append(event);
-  event.html('<div class="image"><img src="/images/events/' + name + '.png"><div class="details"><h3>' +
+  event.html('<div class="image"><img src="/images/events/' + name + '.png"><img class="sold-out-img" src="/images/sold-out.png"><div class="details"><h3>' +
     name + '</h3><div class="price">' + showPrice(price) + '</div><button class="btn btn-default" onclick="buyTicket(' +
-    +event_id + ', \'' + name + '\', ' + parseInt(price) + ')">Purchase</button></div></div>');
+    +event_id + ', \'' + name + '\', ' + parseInt(price) + ')">Buy</button></div></div>');
 }
 
 // Add item to table
