@@ -91,7 +91,7 @@ hr {
     font-size: 16px !important;
   }
   .ticket .qr-code {
-    background-image: url(/images/icon-external.png);
+    background-image: url(/images/icons/icon-external.png);
     background-size: 18px;
     background-repeat: no-repeat;
     background-position: 7px 6px;
