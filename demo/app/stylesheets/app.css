@@ -196,6 +196,9 @@ td.empty {
   margin-top: 0px;
   font-size: inherit;
 }
+.swal2-modal.swal-ticket-purchase .swal2-spacer {
+  height: initial;
+}
 /* Bottom bar */
 #status {
   font-family: courier;

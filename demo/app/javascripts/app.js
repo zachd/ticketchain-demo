@@ -155,7 +155,7 @@ function buyTicket(event_id, event_name, price, ticket_id) {
   price += TRANSAC_FEE;
   swal({
     title: "Ticket Purchase",
-    html: '1 x ' + event_name + ' ticket for <strong>' + showPrice(price) + '</strong>' +
+    html: '<br />1 x ' + event_name + ' ticket for <strong>' + showPrice(price) + '</strong>' +
       '<div class="panel panel-default payment-panel">' +
       '<div class="panel-heading">' +
       '<div class="row">' +
@@ -182,8 +182,10 @@ function buyTicket(event_id, event_name, price, ticket_id) {
       '<div class="col-xs-5 pull-right"><img class="stripe pull-right" src="/images/stripe-logo.png"></div>' +
       '</div>' +
       '</div>' +
-      '</div>',
-    confirmButtonText: 'Purchase',
+      '</div>' +
+      'Click Confirm to complete your purchase.',
+    customClass: 'swal-ticket-purchase',
+    confirmButtonText: 'Confirm',
     cancelButtonText: 'Back',
     showCancelButton: true
   }).then(function() {
@@ -280,10 +282,15 @@ function cancelSale(ticket_id) {
 // Validate ticket
 function validateTicket(ticket_id, owner) {
   ticketChain.validateTicket.call(ticket_id, owner).then(function(is_valid) {
+    // Check if valid
     if (is_valid)
       swal("Success!", "You have a valid ticket.", "success");
     else
       swal("Oops!", "This ticket is invalid.", "error");
+    // Remove params from URL
+    if(window.history != undefined && window.history.pushState != undefined)
+      window.history.pushState({}, document.title, window.location.pathname);
+    return true;
   }).catch(function(e) {
     error(e);
   });
