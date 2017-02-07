@@ -4,7 +4,7 @@
   <title>TicketChain</title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <link href="/images/icon.png" rel="icon" type="image/png">
-  <link href="../app.css" rel='stylesheet' type="text/css">
+  <link href="/app.css" rel='stylesheet' type="text/css">
   <script type="text/javascript">
        // Get parameter from URL
        function getUrlParameter(input) {
@@ -35,9 +35,10 @@
        window.onload = function() {
          var account = getUrlParameter('a');
          var ticket_id = getUrlParameter('t');
-         var event_name = getUrlParameter('e');
+         var event_id = getUrlParameter('e');
+         var event_name = getUrlParameter('n');
          document.title = "Ticket #" + ticket_id;
-         document.getElementById("qrcode").src = "http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=" + account + ':' + ticket_id;
+         document.getElementById("qrcode").src = "http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=" + account + ':' + ticket_id + ':' + event_id;
          document.getElementById("event-name").innerHTML = event_name;
          startTimer();
        }

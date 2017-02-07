@@ -1,8 +1,9 @@
 module.exports = {
   build: {
     "index.html": "index.html",
-    "ticket/index.html": "ticket/index.html",
     "admin/index.html": "admin/index.html",
+    "ticket/index.html": "ticket/index.html",
+    "scan/index.html": "scan/index.html",
     "app.js": [
       "javascripts/jquery-3.1.1.min.js",
       "javascripts/sweetalert2.min.js",

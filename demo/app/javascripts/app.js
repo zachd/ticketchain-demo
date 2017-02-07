@@ -6,6 +6,7 @@ var alrt;
 var num_events;
 var ticketChain;
 var events = {};
+var scanned = [];
 var WEI_CONVERSION = 10000000000000000;
 var TICKETS_LEFT_TEXT = 20;
 var POPUP_TIMEOUT = 1750;
@@ -90,17 +91,18 @@ function fetchTicket(ticket_id, elem, actions) {
       else if (elem == "#userTickets")
         buttons = '<button class="btn btn-default" onclick="sellTicket(' + ticket_id + ', \'' + event_name +
         '\', ' + parseInt(ticket[2].valueOf()) + ')">Sell <span class="hidden-xs">Ticket</span></button>' +
-        '<button class="btn btn-default qr-code" onclick="openPrint(' + ticket_id + ', \'' + event_name + '\')">QR Code</button>';
+        '<button class="btn btn-default qr-code" onclick="openPrint(' + ticket_id + ', ' 
+        + ticket[1].valueOf() + ', \'' + event_name + '\')">QR Code</button>';
     }
     // Add to table
     if (elem == "#market") {
       if ($.contains(document, $('#market tbody .empty')[0]))
         $("#market tbody").empty();
-      addTableRow(elem, ticket_id, ['<img src="/images/icons/icon-ticket.png" class="ticket-icon" /> ' +
+      addTableRow(elem, 'ticket-' + ticket_id, ['<img src="/images/icons/icon-ticket.png" class="ticket-icon" /> ' +
         '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons
       ]);
     } else if (elem == '#userTickets')
-      addTableRow(elem, ticket_id, ['<img src="/images/icons/icon-ticket.png" class="ticket-icon" /> ' +
+      addTableRow(elem, 'ticket-' + ticket_id, ['<img src="/images/icons/icon-ticket.png" class="ticket-icon" /> ' +
         '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons
       ]);
     return true;
@@ -125,10 +127,9 @@ function fetchEvent(event_id, total) {
         ' ticket' + (tickets_left == 1 ? '' : 's') + ' left!');
     // Update stored details
     events[event_id] = item;
+
     // Load market/tickets after last event
     if (event_id == total - 1) {
-      refreshMarket();
-      refreshUser();
       // Hide loading screen if not validator
       if (alrt) {
         swal(alrt,
@@ -138,6 +139,13 @@ function fetchEvent(event_id, total) {
         alrt = null;
       } else if ($('.swal2-title').text() == 'Loading...')
         swal.close();
+      // Show validation result if requested
+      if (getUrlParameter('func') == "validate")
+        validateTicket(getUrlParameter('code'));
+      else {
+        refreshMarket();
+        refreshUser();
+      }
     }
     return true;
   }).catch(function(e) {
@@ -281,16 +289,34 @@ function cancelSale(ticket_id) {
 
 // Validate ticket
 function validateTicket(ticket_code) {
-  var id_owner = ticket_code.split(':');
-  ticketChain.validateTicket.call(id_owner[1], id_owner[0]).then(function(is_valid) {
+  var ticket_code_split = ticket_code.split(':');
+
+  // Get split code parameters
+  var owner = ticket_code_split[0];
+  var ticket_id = ticket_code_split[1];
+  var event_id = ticket_code_split[2];
+  var event_name = events[event_id][1];
+
+  // Validate ticket call
+  ticketChain.validateTicket.call(ticket_id, owner).then(function(resp) {
+    var is_valid = resp[1];
+    var owner_name = resp[0];
     // Check if valid
     if (is_valid)
-      swal("Success!", "You have a valid ticket.", "success");
+      swal("Success!", "This ticket is valid.", "success");
     else
       swal("Oops!", "This ticket is no longer valid.", "error");
     // Remove params from URL
     if(window.history != undefined && window.history.pushState != undefined)
-      window.history.pushState({}, document.title, window.location.pathname);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    // Add to list of scanned tickets
+    var ticket_details = ['<span class="ticket-' + (is_valid ? 'valid' : 'invalid') 
+      + '"></span>', ticket_id, '<img src="/images/icons/icon-ticket.png" class="ticket-icon" /> '
+      + '<span class="ticket-event-name">' + event_name + '</span>', owner_name, 'now'];
+    addTableRow('#scannedTickets', 'ticket-' + ticket_id, ticket_details);
+    // Update scanned tickets local storage
+    scanned.push(ticket_details);
+    localStorage.setItem('scanned', JSON.stringify(scanned));
     return true;
   }).catch(function(e) {
     error(e);
@@ -390,24 +416,23 @@ function showLoading() {
 function openValidator(ticket_id) {
   swal({
     title: 'Ticket Validator',
-    html: 'This verifies a digital ticket with <em>TicketChain</em>.<br />Install one of the apps below and tap <strong>Scan</strong>.<br /><br />' +
+    html: 'This verifies a digital ticket with <em>TicketChain</em>.<br />Install an app below and tap <strong>Open Scanner</strong>.<br /><br />' +
       '<a href="https://play.google.com/store/apps/details?id=com.google.zxing.client.android" target="_blank"><img src="/images/playstore-logo.png"></a> ' +
       '<a href="https://itunes.apple.com/ie/app/qrafter-qr-code-reader-generator/id416098700" target="_blank"><img src="/images/appstore-logo.svg"></a><br />' +
       '<strong>Barcode Scanner</strong></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
       '<strong>Qrafter</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
-    confirmButtonText: "Scan",
+    confirmButtonText: "Open Scanner",
     cancelButtonText: "Back",
     showCancelButton: true
   }).then(function() {
-    window.open("zxing://scan/?ret=" + encodeURIComponent(location.protocol + '//' +
-      location.host + location.pathname + "?id=" + id + "&func=validate&code={CODE}"));
+    window.open("/scan?id=" + id);
   });
   return false;
 }
 
 // Open print screen
-function openPrint(ticket_id, event_name) {
-  window.open('ticket/?t=' + ticket_id + '&e=' + event_name + '&a=' + account);
+function openPrint(ticket_id, event_id, event_name) {
+  window.open('ticket/?t=' + ticket_id + '&e=' + event_id + '&n=' + event_name + '&a=' + account);
   return false;
 }
 
@@ -487,9 +512,10 @@ window.onload = function() {
     account = accounts[id];
     web3.eth.defaultAccount = account;
 
-    // Show validation result
-    if (getUrlParameter('func') == "validate")
-      validateTicket(getUrlParameter('code'));
+    // Get saved scanned tickets
+    scanned = JSON.parse(localStorage.getItem('scanned')) || [];
+    for(var i = scanned.length - 1; i >= 0; i--)
+      addTableRow('#scannedTickets', 'ticket-' + scanned[i][1], scanned[i]);
 
     // Check user exists and refresh users
     ticketChain.getUser.call({

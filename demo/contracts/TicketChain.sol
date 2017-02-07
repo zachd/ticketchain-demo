@@ -129,8 +129,10 @@ contract TicketChain {
         return true;
     }
 
-    function validateTicket(uint _uid, address owner) returns(bool) {
-        return (tickets[_uid].owner == owner);
+    function validateTicket(uint _uid, address owner) returns(string name, bool valid) {
+        address ticket_owner = tickets[_uid].owner;
+        name = users[ticket_owner].name;
+        valid = ticket_owner == owner;
     }
 
     function getUserTickets() returns(uint[] ticket_ids) {
