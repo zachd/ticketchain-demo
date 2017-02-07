@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TicketChain | Scanner</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <meta content="text/html; charset=utf-8" http-equiv="content-type">
+  <meta content="#000000" name="theme-color">
+  <link href="/images/favicon.png" rel="icon" type="image/png">
+  <link href="/app.css" rel='stylesheet' type="text/css">
+  <script src="/app.js"></script>
+</head>
+<body class="threearena">
+  <div class="container header">
+    <div class="row">
+      <div class="col-xs-4">
+        <div id="logo"></div>
+      </div>
+      <div class="col-xs-8 usercolumn">
+        <div class="userbox">
+          <img src="/images/icons/icon-user.png">
+          <div class="name">
+            Welcome, <span id="yourName"></span>!
+          </div>
+          <div class="details">
+            Balance: <span id="yourBalance"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container content">
+    <div class="row">
+      <div class="col-md-12">
+        <a class="btn btn-default btn-lg" id="scan">Scan Ticket</a>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Scanned Tickets</h2>
+        <table class="table table-striped" id="scannedTickets">
+          <thead>
+            <tr>
+              <td></td>
+              <td>ID</td>
+              <td>Event</td>
+              <td>User</td>
+              <td>Time</td>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <br>
+    <div class="hidden-xs" id="status"></div>
+    <div class="powered-by">Powered by <img src="/images/ticketchain-logo.png"></div>
+  </div>
+  <script type="text/javascript">
+    var id = getUrlParameter('id');
+    document.getElementById('scan').href = "zxing://scan/?ret=" + encodeURIComponent(location.protocol + '//' + location.host + location.pathname + "?id=" + id + "&func=validate&code={CODE}");
+  </script>
+</body>
+</html>
