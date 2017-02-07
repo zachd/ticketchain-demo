@@ -229,6 +229,15 @@ td.empty {
 .print-header {
   font-size: 20px;
 }
+.print-ticket-count {
+  font-size: 16px;
+  margin-top: 10px;
+}
+.print-footer {
+  color: #b91f37;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
 #qrcode {
   width: 200px;
   height: 200px;

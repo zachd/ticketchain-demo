@@ -90,7 +90,7 @@ function fetchTicket(ticket_id, elem, actions) {
       else if (elem == "#userTickets")
         buttons = '<button class="btn btn-default" onclick="sellTicket(' + ticket_id + ', \'' + event_name +
         '\', ' + parseInt(ticket[2].valueOf()) + ')">Sell <span class="hidden-xs">Ticket</span></button>' +
-        '<button class="btn btn-default qr-code" onclick="openPrint(' + ticket_id + ')">QR Code</button>';
+        '<button class="btn btn-default qr-code" onclick="openPrint(' + ticket_id + ', \'' + event_name + '\')">QR Code</button>';
     }
     // Add to table
     if (elem == "#market") {
@@ -405,8 +405,8 @@ function openValidator(ticket_id) {
 }
 
 // Open print screen
-function openPrint(ticket_id) {
-  window.open('ticket/?id=' + ticket_id);
+function openPrint(ticket_id, event_name) {
+  window.open('ticket/?id=' + ticket_id + '&e=' + event_name);
   return false;
 }
 

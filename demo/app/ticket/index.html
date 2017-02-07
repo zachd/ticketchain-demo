@@ -34,18 +34,21 @@
        // Onload function
        window.onload = function() {
          var ticket_id = getUrlParameter('id');
+         var event_name = getUrlParameter('e');
          document.title = "Ticket #" + ticket_id;
          document.getElementById("qrcode").src = "http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=" + ticket_id;
-         document.getElementById("ticket-id").innerHTML = ticket_id;
+         document.getElementById("event-name").innerHTML = event_name;
          startTimer();
        }
   </script>
 </head>
 <body>
   <div class="container-fluid print-container">
-    <h3 class="print-header">Ticket #<span id="ticket-id"></span></h3>
+    <h3 class="print-header"><span id="event-name"></span></h3>
+    <div class="print-ticket-count">1 x TICKET</div>
     <div id="code-container"><img id="qrcode"></div>
     <div id="time"></div>
+    <div class="print-footer">SCREENSHOTS WILL NOT BE ACCEPTED</div>
   </div>
 </body>
 </html>
