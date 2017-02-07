@@ -276,6 +276,7 @@ body.threearena {
 }
 .threearena .header {
   background: url('images/themes/3arena-header.png') no-repeat;
+  background-size: auto 100%;
   padding: 15px 20px;
 }
 .threearena .content {
