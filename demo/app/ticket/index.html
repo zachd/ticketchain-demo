@@ -33,10 +33,11 @@
        }
        // Onload function
        window.onload = function() {
-         var ticket_id = getUrlParameter('id');
+         var account = getUrlParameter('a');
+         var ticket_id = getUrlParameter('t');
          var event_name = getUrlParameter('e');
          document.title = "Ticket #" + ticket_id;
-         document.getElementById("qrcode").src = "http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=" + ticket_id;
+         document.getElementById("qrcode").src = "http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=" + account + ':' + ticket_id;
          document.getElementById("event-name").innerHTML = event_name;
          startTimer();
        }

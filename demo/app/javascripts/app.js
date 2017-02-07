@@ -280,13 +280,14 @@ function cancelSale(ticket_id) {
 }
 
 // Validate ticket
-function validateTicket(ticket_id, owner) {
-  ticketChain.validateTicket.call(ticket_id, owner).then(function(is_valid) {
+function validateTicket(ticket_code) {
+  var id_owner = ticket_code.split(':');
+  ticketChain.validateTicket.call(id_owner[1], id_owner[0]).then(function(is_valid) {
     // Check if valid
     if (is_valid)
       swal("Success!", "You have a valid ticket.", "success");
     else
-      swal("Oops!", "This ticket is invalid.", "error");
+      swal("Oops!", "This ticket is no longer valid.", "error");
     // Remove params from URL
     if(window.history != undefined && window.history.pushState != undefined)
       window.history.pushState({}, document.title, window.location.pathname);
@@ -399,14 +400,14 @@ function openValidator(ticket_id) {
     showCancelButton: true
   }).then(function() {
     window.open("zxing://scan/?ret=" + encodeURIComponent(location.protocol + '//' +
-      location.host + location.pathname + "?id=" + id + "&function=validate&ticket={CODE}"));
+      location.host + location.pathname + "?id=" + id + "&func=validate&code={CODE}"));
   });
   return false;
 }
 
 // Open print screen
 function openPrint(ticket_id, event_name) {
-  window.open('ticket/?id=' + ticket_id + '&e=' + event_name);
+  window.open('ticket/?t=' + ticket_id + '&e=' + event_name + '&a=' + account);
   return false;
 }
 
@@ -487,8 +488,8 @@ window.onload = function() {
     web3.eth.defaultAccount = account;
 
     // Show validation result
-    if (getUrlParameter('function') == "validate")
-      validateTicket(getUrlParameter('ticket'), account);
+    if (getUrlParameter('func') == "validate")
+      validateTicket(getUrlParameter('code'));
 
     // Check user exists and refresh users
     ticketChain.getUser.call({

@@ -226,12 +226,15 @@ td.empty {
   border: dashed 2px #999;
   margin: 5px;
 }
+#code-container {
+  height: 180px;
+}
 .print-header {
-  font-size: 20px;
+  font-size: 22px;
 }
 .print-ticket-count {
   font-size: 16px;
-  margin-top: 10px;
+  margin: 20px 0px;
 }
 .print-footer {
   color: #b91f37;
@@ -245,7 +248,7 @@ td.empty {
 #time {
   font-size: 28px;
   font-weight: bold;
-  margin-bottom: 50px;
+  margin: 50px 0px;
 }
 
 
