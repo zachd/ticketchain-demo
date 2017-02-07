@@ -53,7 +53,7 @@ function refreshUser() {
     from: account
   }).then(function(resp) {
     tickets = resp[1];
-    $('#yourBalance').html(showBalance());
+    $('#yourBalance').html('Balance: ' + showBalance());
     refreshUserTickets();
     return true;
   }).catch(function(e) {
@@ -564,6 +564,7 @@ window.onload = function() {
     });
 
     // Show account balance
-    $('#yourBalance').html(showBalance());
+    if(window.location.pathname !== '/scan/')
+      $('#yourBalance').html('Balance: ' + showBalance());
   });
 }
