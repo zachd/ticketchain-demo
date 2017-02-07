@@ -53,7 +53,8 @@ function refreshUser() {
     from: account
   }).then(function(resp) {
     tickets = resp[1];
-    $('#yourBalance').html('Balance: ' + showBalance());
+    if(window.location.pathname !== '/scan/')
+      $('#yourBalance').html('Balance: ' + showBalance());
     refreshUserTickets();
     return true;
   }).catch(function(e) {
