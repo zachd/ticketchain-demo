@@ -303,17 +303,25 @@ function validateTicket(ticket_code) {
     var owner_name = resp[0];
     // Check if valid
     if (is_valid)
-      swal("Success!", "This ticket is valid.", "success");
+      swal({title: "Ticket Valid", 
+        html: '<br /><img src="/images/icons/icon-ticket.png" class="ticket-icon" /> <strong>'
+        + event_name + '</strong><br /><br />Ticket #' + ticket_id, 
+        type: "success"
+      });
     else
-      swal("Oops!", "This ticket is no longer valid.", "error");
+      swal({title: "Ticket Invalid", 
+        html: '<br /><img src="/images/icons/icon-ticket.png" class="ticket-icon" /> <strong>'
+        + event_name + '</strong><br /><br />This ticket is no longer valid', 
+        type: "error"
+      });
     // Remove params from URL
     if(window.history != undefined && window.history.pushState != undefined)
       window.history.replaceState({}, document.title, window.location.pathname);
     // Add to list of scanned tickets
     var ticket_details = ['<span class="ticket-' + (is_valid ? 'valid' : 'invalid') 
-      + '"></span>', ticket_id, '<img src="/images/icons/icon-ticket.png" class="ticket-icon" /> '
-      + '<span class="ticket-event-name">' + event_name + '</span>', owner_name, 'now'];
-    addTableRow('#scannedTickets', 'ticket-' + ticket_id, ticket_details);
+      + '"></span>', '<img src="/images/icons/icon-ticket.png" class="ticket-icon" /> '
+      + '<span class="ticket-event-name">' + event_name + '</span> (Ticket #' + ticket_id + ')', owner_name];
+    addTableRow('#scannedTickets', 'ticket-' + ticket_id, ticket_details, true);
     // Update scanned tickets local storage
     scanned.push(ticket_details);
     localStorage.setItem('scanned', JSON.stringify(scanned));
@@ -395,10 +403,13 @@ function addEvent(elem, event_id, name, price) {
 }
 
 // Add item to table
-function addTableRow(elem, item_id, attrs) {
+function addTableRow(elem, item_id, attrs, prepend) {
   var tr = $('<tr>').attr('id', item_id);
   tr.addClass('ticket');
-  $(elem).append(tr);
+  if(prepend)
+    $(elem).prepend(tr);
+  else
+    $(elem).append(tr);
   for (var attr of attrs)
     tr.append($('<td>').html(attr));
 }

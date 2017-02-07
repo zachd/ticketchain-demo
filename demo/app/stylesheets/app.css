@@ -160,6 +160,18 @@ td.empty {
   vertical-align: text-top;
   margin-right: 3px;
 }
+.ticket-valid, .ticket-invalid {
+  width: 24px;
+  height: 24px;
+  background-size: contain;
+  display: inline-block;
+}
+.ticket-valid {
+  background-image: url('/images/icons/icon-valid.png');
+}
+.ticket-invalid {
+  background-image: url('/images/icons/icon-invalid.png');
+}
 /* Payment Screen */
 .payment-panel {
   margin-top: 15px;
