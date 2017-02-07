@@ -1,51 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>TicketChain</title>
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <link href="/images/icon.png" rel="icon" type="image/png">
-    <link href="../app.css" rel='stylesheet' type="text/css">
-    <script type="text/javascript">
-      // Get parameter from URL
-      function getUrlParameter(input) {
-        var vars = decodeURIComponent(window.location.search.substring(1)).split('&'),
-          param;
-        for (var i = 0; i < vars.length; i++) {
-          param = vars[i].split('=');
-          if (param[0] === input)
-            return param[1] === undefined ? true : param[1];
-        }
-      }
-      // Timer: http://stackoverflow.com/a/18229123
-      function checkTime(i) {
-        return (i < 10) ? "0" + i : i;
-      }
-      // Timer start
-      function startTimer() {
-        var today = new Date(),
-          h = checkTime(today.getHours()),
-          m = checkTime(today.getMinutes()),
-          s = checkTime(today.getSeconds());
-        document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
-        t = setTimeout(function() {
-          startTimer()
-        }, 500);
-      }
-      // Onload function
-      window.onload = function() {
-        var ticket_id = getUrlParameter('id');
-        document.title = "Ticket #" + ticket_id;
-        document.getElementById("qrcode").src = "http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=" + ticket_id;
-        document.getElementById("ticket-id").innerHTML = ticket_id;
-        startTimer();
-      }
-    </script>
+  <title>TicketChain</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link href="/images/icon.png" rel="icon" type="image/png">
+  <link href="../app.css" rel='stylesheet' type="text/css">
+  <script type="text/javascript">
+       // Get parameter from URL
+       function getUrlParameter(input) {
+         var vars = decodeURIComponent(window.location.search.substring(1)).split('&'),
+           param;
+         for (var i = 0; i < vars.length; i++) {
+           param = vars[i].split('=');
+           if (param[0] === input)
+             return param[1] === undefined ? true : param[1];
+         }
+       }
+       // Timer: http://stackoverflow.com/a/18229123
+       function checkTime(i) {
+         return (i < 10) ? "0" + i : i;
+       }
+       // Timer start
+       function startTimer() {
+         var today = new Date(),
+           h = checkTime(today.getHours()),
+           m = checkTime(today.getMinutes()),
+           s = checkTime(today.getSeconds());
+         document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
+         t = setTimeout(function() {
+           startTimer()
+         }, 500);
+       }
+       // Onload function
+       window.onload = function() {
+         var ticket_id = getUrlParameter('id');
+         document.title = "Ticket #" + ticket_id;
+         document.getElementById("qrcode").src = "http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=" + ticket_id;
+         document.getElementById("ticket-id").innerHTML = ticket_id;
+         startTimer();
+       }
+  </script>
 </head>
 <body>
-    <div class="container-fluid print-container">
-        <h3 class="print-header">Ticket #<span id="ticket-id"></span></h3>
-        <div id="code-container"><img id="qrcode"></div>
-        <div id="time"></div>
-    </div>
+  <div class="container-fluid print-container">
+    <h3 class="print-header">Ticket #<span id="ticket-id"></span></h3>
+    <div id="code-container"><img id="qrcode"></div>
+    <div id="time"></div>
+  </div>
 </body>
 </html>

@@ -8,6 +8,7 @@ var ticketChain;
 var events = {};
 var WEI_CONVERSION = 10000000000000000;
 var TICKETS_LEFT_TEXT = 20;
+var POPUP_TIMEOUT = 1750;
 var TRANSAC_FEE = 10000;
 var RESALE_LIMIT = 1.5;
 
@@ -34,7 +35,7 @@ function refreshEvents() {
 // Refresh market listing (calls refreshEventTickets)
 function refreshMarket() {
   // Show empty text
-  if(!$.contains(document, $('#market tbody .empty')[0])){
+  if (!$.contains(document, $('#market tbody .empty')[0])) {
     $("#market tbody").empty();
     $('#market tbody').append('<tr><td class="empty" colspan="3">' +
       'There are no tickets on the market.</td></tr>');
@@ -92,8 +93,8 @@ function fetchTicket(ticket_id, elem, actions) {
         '<button class="btn btn-default qr-code" onclick="openPrint(' + ticket_id + ')">QR Code</button>';
     }
     // Add to table
-    if (elem == "#market"){
-      if($.contains(document, $('#market tbody .empty')[0]))
+    if (elem == "#market") {
+      if ($.contains(document, $('#market tbody .empty')[0]))
         $("#market tbody").empty();
       addTableRow(elem, ticket_id, ['<img src="/images/icons/icon-ticket.png" class="ticket-icon" /> ' +
         '<span class="ticket-event-name">' + event_name + '</span>', showPrice(ticket[2].valueOf()), buttons
@@ -111,7 +112,7 @@ function fetchTicket(ticket_id, elem, actions) {
 // Fetch event
 function fetchEvent(event_id, total) {
   ticketChain.getEvent.call(event_id).then(function(item) {
-    if(events[event_id] === undefined)
+    if (events[event_id] === undefined)
       addEvent('#availableEvents', event_id, item[1], item[2].valueOf());
     // Check if sold out
     var sold_out = parseInt(item[4].valueOf()) >= parseInt(item[3].valueOf());
@@ -119,9 +120,9 @@ function fetchEvent(event_id, total) {
     $('#event-' + event_id + ' .btn').attr("disabled", sold_out);
     // Show low tickets left
     var tickets_left = parseInt(item[3].valueOf()) - parseInt(item[4].valueOf());
-    if(tickets_left <= TICKETS_LEFT_TEXT)
-      $('#event-' + event_id + ' .tickets-left').text(tickets_left 
-        + ' ticket' + (tickets_left == 1 ? '' : 's') + ' left!');
+    if (tickets_left <= TICKETS_LEFT_TEXT)
+      $('#event-' + event_id + ' .tickets-left').text(tickets_left +
+        ' ticket' + (tickets_left == 1 ? '' : 's') + ' left!');
     // Update stored details
     events[event_id] = item;
     // Load market/tickets after last event
@@ -130,7 +131,10 @@ function fetchEvent(event_id, total) {
       refreshUser();
       // Hide loading screen if not validator
       if (alrt) {
-        swal(alrt);
+        swal(alrt,
+          function() {},
+          function(dismiss) {}
+        );
         alrt = null;
       } else if ($('.swal2-title').text() == 'Loading...')
         swal.close();
@@ -152,33 +156,33 @@ function buyTicket(event_id, event_name, price, ticket_id) {
   swal({
     title: "Ticket Purchase",
     html: '1 x ' + event_name + ' ticket for <strong>' + showPrice(price) + '</strong>' +
-          '<div class="panel panel-default payment-panel">' +
-            '<div class="panel-heading">' +
-              '<div class="row">' + 
-                '<div class="col-xs-8 col-md-6 panel-title">Payment Details</div>' +
-                '<div class="col-xs-4 col-md-6 panel-icons"><img class="pull-right cards" src="/images/icons/icon-colouredcards.png"></div>' +
-              '</div>' +
-            '</div>' +
-            '<div class="panel-body">' +
-              '<div class="row">' +
-                '<div class="col-xs-12"><div class="form-group">' +
-                  '<label>CARD NUMBER</label><div class="input-group">' +
-                  '<input type="tel" class="form-control" value="4242 4242 4242 4242" disabled>' +
-                  '<span class="input-group-addon"><img class="card-icon" src="/images/icons/icon-card.png"></span>' +
-                  '</div></div>' +
-                '</div>' +
-              '</div>' +
-              '<div class="row">' +
-                '<div class="col-xs-7"><div class="form-group">' +
-                  '<label>EXP DATE</label><input type="tel" class="form-control" value="01/18" disabled>' +
-                '</div></div>' +
-                '<div class="col-xs-5 pull-right"><div class="form-group">' +
-                  '<label>CV CODE</label><input type="tel" class="form-control" value="123" disabled>' +
-                '</div></div>' +
-                '<div class="col-xs-5 pull-right"><img class="stripe pull-right" src="/images/stripe-logo.png"></div>' +
-              '</div>' +
-            '</div>' +
-          '</div>',
+      '<div class="panel panel-default payment-panel">' +
+      '<div class="panel-heading">' +
+      '<div class="row">' +
+      '<div class="col-xs-8 col-md-6 panel-title">Payment Details</div>' +
+      '<div class="col-xs-4 col-md-6 panel-icons"><img class="pull-right cards" src="/images/icons/icon-colouredcards.png"></div>' +
+      '</div>' +
+      '</div>' +
+      '<div class="panel-body">' +
+      '<div class="row">' +
+      '<div class="col-xs-12"><div class="form-group">' +
+      '<label>CARD NUMBER</label><div class="input-group">' +
+      '<input type="tel" class="form-control" value="4242 4242 4242 4242" disabled>' +
+      '<span class="input-group-addon"><img class="card-icon" src="/images/icons/icon-card.png"></span>' +
+      '</div></div>' +
+      '</div>' +
+      '</div>' +
+      '<div class="row">' +
+      '<div class="col-xs-7"><div class="form-group">' +
+      '<label>EXP DATE</label><input type="tel" class="form-control" value="01/18" disabled>' +
+      '</div></div>' +
+      '<div class="col-xs-5 pull-right"><div class="form-group">' +
+      '<label>CV CODE</label><input type="tel" class="form-control" value="123" disabled>' +
+      '</div></div>' +
+      '<div class="col-xs-5 pull-right"><img class="stripe pull-right" src="/images/stripe-logo.png"></div>' +
+      '</div>' +
+      '</div>' +
+      '</div>',
     confirmButtonText: 'Purchase',
     cancelButtonText: 'Back',
     showCancelButton: true
@@ -196,7 +200,7 @@ function buyTicket(event_id, event_name, price, ticket_id) {
             " for " + showPrice(price - TRANSAC_FEE) + "!",
           type: "success",
           showConfirmButton: false,
-          timer: 1750
+          timer: POPUP_TIMEOUT
         };
         refresh();
         return true;
@@ -211,23 +215,23 @@ function buyTicket(event_id, event_name, price, ticket_id) {
 // Sell ticket
 function sellTicket(ticket_id, event_name, orig_price) {
   swal({
-      title: "Sell Ticket",
-      text: "Enter a resale price for your " + event_name + " ticket.",
-      input: "text",
-      showCancelButton: true,
-      inputValidator: function (input) {
-        return new Promise(function (resolve, reject) {
-          var max_price = orig_price * RESALE_LIMIT;
-          if (input === "" || isNaN(input) ||
-              parseInt(input) < 0 || input.length > 10)
-            reject("Amount invalid! Please try again.");
-          if (parseInt(input) > (max_price / WEI_CONVERSION))
-            reject('Ticket resale is limited to a ' + ((RESALE_LIMIT - 1) * 100) +
-              '% markup (' + showPrice(max_price) + ')');
-          resolve();
-        })
-      }
-    }).then(
+    title: "Sell Ticket",
+    text: "Enter a resale price for your " + event_name + " ticket.",
+    input: "text",
+    showCancelButton: true,
+    inputValidator: function(input) {
+      return new Promise(function(resolve, reject) {
+        var max_price = orig_price * RESALE_LIMIT;
+        if (input === "" || isNaN(input) ||
+          parseInt(input) < 0 || input.length > 10)
+          reject("Amount invalid! Please try again.");
+        if (parseInt(input) > (max_price / WEI_CONVERSION))
+          reject('Ticket resale is limited to a ' + ((RESALE_LIMIT - 1) * 100) +
+            '% markup (' + showPrice(max_price) + ')');
+        resolve();
+      })
+    }
+  }).then(
     function(input) {
       showLoading();
       send(ticketChain.sellTicket, [ticket_id, parseInt(input) * WEI_CONVERSION, {
@@ -241,12 +245,13 @@ function sellTicket(ticket_id, event_name, orig_price) {
               showPrice(parseInt(input) * WEI_CONVERSION) + ".",
             type: "success",
             showConfirmButton: false,
-            timer: 1750
+            timer: POPUP_TIMEOUT
           };
           refresh();
           return true;
         }
       );
+      return true;
     }
   );
 }
@@ -264,7 +269,7 @@ function cancelSale(ticket_id) {
         text: "Your ticket was taken off the market.",
         type: "success",
         showConfirmButton: false,
-        timer: 1750
+        timer: POPUP_TIMEOUT
       };
       refresh();
       return true;
@@ -307,10 +312,13 @@ function newEvent() {
 // Create user
 function newUser(name) {
   swal({
-    title: "Hi " + name + "!",
-    text: "Welcome to TicketChain.",
-    timer: 1250
-  });
+      title: "Hi " + name + "!",
+      html: "Welcome to TicketChain.<br /><br />Buy a ticket to get started!.",
+      timer: POPUP_TIMEOUT
+    },
+    function() {},
+    function(dismiss) {}
+  );
   send(ticketChain.newUser, [name, {
       from: account
     }],
@@ -438,12 +446,15 @@ function isAdmin() {
 function error(e, error_msg) {
   console.log(e);
   swal({
-    title: "Oops!",
-    text: error_msg ? error_msg : "An error occurred. Please try again.",
-    type: "error",
-    showConfirmButton: false,
-    timer: 1750
-  });
+      title: "Oops!",
+      text: error_msg ? error_msg : "An error occurred. Please try again.",
+      type: "error",
+      showConfirmButton: false,
+      timer: POPUP_TIMEOUT
+    },
+    function() {},
+    function(dismiss) {}
+  );
   setStatus("An error occured.");
 }
 
@@ -485,8 +496,8 @@ window.onload = function() {
             text: "Please enter your name below.",
             input: "text",
             allowOutsideClick: false,
-            inputValidator: function (input) {
-              return new Promise(function (resolve, reject) {
+            inputValidator: function(input) {
+              return new Promise(function(resolve, reject) {
                 if (input === "")
                   reject("Please enter a valid name");
                 resolve();
