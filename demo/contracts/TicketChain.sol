@@ -32,6 +32,10 @@ contract TicketChain {
     mapping(uint => Ticket) tickets;
 
     function TicketChain() {
+        newEvent("Ed Sheeran", 750000000000000000, 1);
+        newEvent("Red Hot Chili Peppers", 650000000000000000, 20);
+        newEvent("Cirque Du Soleil", 450000000000000000, 100);
+        newEvent("Hans Zimmer", 850000000000000000, 150);
     }
 
     function newUser(string name) {
