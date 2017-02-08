@@ -33,12 +33,15 @@
        }
        // Onload function
        window.onload = function() {
-         var account = getUrlParameter('a');
-         var ticket_id = getUrlParameter('t');
-         var event_id = getUrlParameter('e');
-         var event_name = getUrlParameter('n');
+         var data = getUrlParameter('t').split(':');
+         var ticket_id = data[0];
+         var event_id = data[1];
+         var event_name = data[2];
+         var account = data[3];
+         var name = data[4];
          document.title = "Ticket #" + ticket_id;
          document.getElementById("qrcode").src = "http://chart.apis.google.com/chart?cht=qr&chs=200x200&chl=" + account + ':' + ticket_id + ':' + event_id;
+         document.getElementById("name").innerHTML = name;
          document.getElementById("event-name").innerHTML = event_name;
          startTimer();
        }
@@ -46,9 +49,10 @@
 </head>
 <body>
   <div class="container-fluid print-container">
+    <div class="print-description">EVENT</div>
     <h3 class="print-header"><span id="event-name"></span></h3>
-    <div class="print-ticket-count">1 x TICKET</div>
-    <div id="code-container"><img id="qrcode"></div>
+    <div class="code-container"><img id="qrcode"></div>
+    <div id="name" class="print-ticket-name"></div>
     <div id="time"></div>
     <div class="print-footer">SCREENSHOTS WILL NOT BE ACCEPTED</div>
   </div>

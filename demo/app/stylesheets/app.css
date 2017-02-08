@@ -1,7 +1,6 @@
 /* General classes */
 body {
   font-family: "Open Sans", sans-serif;
-  margin-bottom: 40px;
 }
 button {
   font-size: 16px;
@@ -31,6 +30,9 @@ hr {
 .container {
   padding: 20px;
   position: relative;
+}
+.content {
+  margin-bottom: 40px;
 }
 .btn {
   margin-right: 5px;
@@ -233,20 +235,27 @@ td.empty {
 /* Print page */
 .print-container {
   max-width: 400px;
+  padding-top: 40px;
   margin-left: initial;
   text-align: center;
   border: dashed 2px #999;
   margin: 5px;
 }
-#code-container {
-  height: 180px;
+.code-container {
+  height: 190px;
 }
 .print-header {
-  font-size: 22px;
+  font-size: 30px;
+  margin: 0px 0px 40px;
 }
-.print-ticket-count {
-  font-size: 16px;
-  margin: 20px 0px;
+.print-description {
+  font-size: 14px;
+  margin-top: 10px;
+  color: #666;
+  font-weight: bold;
+}
+.print-ticket-name {
+  font-size: 19px;
 }
 .print-footer {
   color: #b91f37;
@@ -258,9 +267,10 @@ td.empty {
   height: 200px;
 }
 #time {
-  font-size: 28px;
+  font-size: 36px;
   font-weight: bold;
-  margin: 50px 0px;
+  color: #aaa;
+  margin: 40px 0px;
 }
 
 

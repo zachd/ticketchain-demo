@@ -1,5 +1,6 @@
 var id;
 var accounts;
+var name;
 var account;
 var tickets;
 var alrt;
@@ -9,7 +10,7 @@ var events = {};
 var scanned = [];
 var WEI_CONVERSION = 10000000000000000;
 var TICKETS_LEFT_TEXT = 20;
-var POPUP_TIMEOUT = 1750;
+var POPUP_TIMEOUT = 2000;
 var TRANSAC_FEE = 10000;
 var RESALE_LIMIT = 1.5;
 
@@ -52,6 +53,7 @@ function refreshUser() {
   ticketChain.getUser.call({
     from: account
   }).then(function(resp) {
+    name = resp[0];
     tickets = resp[1];
     if(window.location.pathname !== '/scan/')
       $('#yourBalance').html('Balance: ' + showBalance());
@@ -356,7 +358,8 @@ function newEvent() {
 function newUser(name) {
   swal({
       title: "Hi " + name + "!",
-      html: "Welcome to TicketChain.<br /><br />Buy a ticket to get started!.",
+      html: "<br /><br />Welcome to <strong>TicketChain</strong>.",
+      confirmButtonText: "Let's Go!",
       timer: POPUP_TIMEOUT
     },
     function() {},
@@ -444,7 +447,8 @@ function openValidator(ticket_id) {
 
 // Open print screen
 function openPrint(ticket_id, event_id, event_name) {
-  window.open('ticket/?t=' + ticket_id + '&e=' + event_id + '&n=' + event_name + '&a=' + account);
+  window.open('ticket/?t=' + ticket_id + ':' + event_id + ':' + event_name + ':' + account + ':' + name, 
+    'print', 'width=400, height=535');
   return false;
 }
 
@@ -545,7 +549,9 @@ window.onload = function() {
             inputValidator: function(input) {
               return new Promise(function(resolve, reject) {
                 if (input === "")
-                  reject("Please enter a valid name");
+                  reject("Please enter a valid name.");
+                if (!input.match(/^[0-9a-zA-Z-_ ]+$/))
+                  reject("Please enter a name with valid letters.");
                 resolve();
               })
             }
