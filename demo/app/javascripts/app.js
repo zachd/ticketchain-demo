@@ -1,13 +1,15 @@
+// User vars
 var id;
 var accounts;
 var name;
-var account;
-var tickets;
 var alrt;
+var account;
 var num_events;
-var ticketChain;
+var evts_loaded;
 var events = {};
+var tickets = [];
 var scanned = [];
+var ticketChain;
 var WEI_CONVERSION = 10000000000000000;
 var TICKETS_LEFT_TEXT = 20;
 var POPUP_TIMEOUT = 2000;
@@ -24,10 +26,11 @@ function refresh() {
 
 // Refresh events (calls refreshMarket/refreshUser)
 function refreshEvents() {
+  evts_loaded = 0;
   ticketChain.getNumEvents.call().then(function(count) {
     num_events = count;
     for (var i = 0; i < count; i++)
-      fetchEvent(i, count);
+      fetchEvent(i);
     return true;
   }).catch(function(e) {
     error(e);
@@ -115,7 +118,7 @@ function fetchTicket(ticket_id, elem, actions) {
 }
 
 // Fetch event
-function fetchEvent(event_id, total) {
+function fetchEvent(event_id) {
   ticketChain.getEvent.call(event_id).then(function(item) {
     if (events[event_id] === undefined)
       addEvent('#availableEvents', event_id, item[1], item[2].valueOf());
@@ -130,9 +133,10 @@ function fetchEvent(event_id, total) {
         ' ticket' + (tickets_left == 1 ? '' : 's') + ' left!');
     // Update stored details
     events[event_id] = item;
+    evts_loaded += 1;
 
-    // Load market/tickets after last event
-    if (event_id == total - 1) {
+    // Load market/tickets after all events received
+    if (evts_loaded == num_events) {
       // Hide loading screen if not validator
       if (alrt) {
         swal(alrt,
