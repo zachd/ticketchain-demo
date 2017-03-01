@@ -63,6 +63,9 @@ p {
   font-weight: 200;
   letter-spacing: 1px;
 }
+.navbar-toggle .fa-bars {
+  margin-right: 5px;
+}
 .navbar-default .navbar-header .navbar-brand {
   font-family: 'Catamaran', 'Helvetica', 'Arial', 'sans-serif';
   font-weight: 200;
