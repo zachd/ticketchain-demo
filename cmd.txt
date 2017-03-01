@@ -1,0 +1,1 @@
+for(var i = 0; i < 501; i++){ticketChain.getUser.call({from: x[i]}).then(function(e){if(e[0] !== "")console.log(e)})}
