@@ -445,7 +445,8 @@ footer ul li a.active {
 }
 .btn-xl {
   padding: 15px 45px;
-  font-size: 11px;
+  font-weight: bold;
+  font-size: 13px;
 }
 ::-moz-selection {
   color: white;
