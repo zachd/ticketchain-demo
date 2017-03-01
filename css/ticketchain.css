@@ -247,11 +247,21 @@ section.demo .badges .badge-link img {
     font-size: 70px;
   }
 }
+section.features .flex-align {
+  display:flex;
+  align-items: center;
+}
 section.features .section-heading {
   margin-bottom: 100px;
 }
 section.features .section-heading h2 {
   margin-top: 0;
+  font-size: 36px;
+}
+@media (min-width: 992px) {
+  section.features .section-heading h2 {
+    font-size: 50px;
+  }
 }
 section.features .section-heading p {
   margin-bottom: 0;
@@ -274,7 +284,14 @@ section.features .device-container .embed-video {
 }
 section.features .feature-item {
   text-align: center;
+}
+section.features .feature-item.top {
   margin-bottom: 100px;
+}
+@media (max-width: 768px) {
+    section.features .feature-item {
+      margin-bottom: 100px;
+    }
 }
 section.features .feature-item h3 {
   font-size: 30px;
@@ -300,10 +317,11 @@ section.cta {
   -o-background-size: cover;
   background-position: center;
   background-image: url('../img/phone.jpg');
-  padding: 150px 0;
+  padding: 100px 0;
 }
 section.cta .cta-content {
   position: relative;
+  text-align: center;
   z-index: 1;
 }
 section.cta .cta-content h2 {
@@ -311,9 +329,12 @@ section.cta .cta-content h2 {
   margin-bottom: 25px;
   color: white;
   max-width: 550px;
-  font-size: 36px;
+  font-size: 32px;
 }
 @media (min-width: 768px) {
+  section.cta .cta-content {
+    text-align: left;
+  }
   section.cta .cta-content h2 {
     font-size: 50px;
   }
@@ -332,6 +353,13 @@ section.whyus {
 section.whyus h2 {
   margin-top: 0;
   margin-bottom: 55px;
+  font-size: 38px;
+}
+
+@media (min-width: 992px) {
+  section.whyus h2 {
+    font-size: 50px;
+  }
 }
 section.whyus .col-md-4 {
   text-align: center;
@@ -359,6 +387,12 @@ section.contact {
 section.contact h2 {
   margin-top: 0;
   margin-bottom: 25px;
+  font-size: 30px;
+}
+@media (min-width: 768px) {
+    section.contact h2 {
+      font-size: 40px;
+    }
 }
 section.contact h2 i {
   color: #dd4b39;
