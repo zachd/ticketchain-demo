@@ -247,9 +247,11 @@ section.demo .badges .badge-link img {
     font-size: 70px;
   }
 }
-section.features .flex-align {
-  display:flex;
-  align-items: center;
+@media (min-width: 992px) {
+  section.features .flex-align {
+    display:flex;
+    align-items: center;
+  }
 }
 section.features .section-heading {
   margin-bottom: 100px;
