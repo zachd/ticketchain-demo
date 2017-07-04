@@ -388,6 +388,40 @@ section.whyus .trophy-text {
 section.whyus .small {
     font-size: 15px;
 }
+section.theTeam {
+  text-align: center;
+}
+section.theTeam h2 {
+  margin-top: 0;
+  margin-bottom: 55px;
+  font-size: 38px;
+}
+
+@media (min-width: 992px) {
+  section.theTeam h2 {
+    font-size: 50px;
+  }
+}
+section.theTeam .col-md-4 {
+  text-align: center;
+}
+section.theTeam i {
+  font-size: 80px;
+  border-radius: 100%;
+  color: white;
+}
+section.theTeam .title {
+    font-size: 28px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+section.theTeam .trophy-text {
+    font-size: 18px;
+    margin-bottom: 50px;
+}
+section.theTeam .small {
+    font-size: 15px;
+}
 section.contact {
   text-align: center;
 }
