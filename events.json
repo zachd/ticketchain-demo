@@ -66,7 +66,20 @@
       "location":"The O2",
       "date":"2/01/17",
       "coverImage":"https://upload.wikimedia.org/wikipedia/en/e/e4/Avicii_New_Logo.png",
-      "id":2
+      "id":2,
+      "ticketTypes":[
+        {
+          "price":"$50",
+          "title":"Standing",
+          "amountRemaining":"3",
+          "startDate":"Saturday 2/01/17",
+          "finishDate":"Saturday 2/01/17",
+          "startTime":"17:00",
+          "finishTime":"20:00",
+          "description":"Jump around and have a great time in the standing area.",
+          "location":"The O2"
+        }
+      ]
     },
     {  
       "time":"5:00PM - 8:00PM",
