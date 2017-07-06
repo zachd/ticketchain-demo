@@ -1,0 +1,324 @@
+{  
+  "events":[  
+    {  
+      "time":"2:00PM - 1:00AM",
+      "squareImage":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/V404na.jpg/220px-V404na.jpg",
+      "priceRange":"$20 - 30",
+      "description":"The first event of the year!",
+      "title":"Tiesto",
+      "location":"The Cricket Pitch",
+      "date":"1/01/17",
+      "coverImage":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Tiesto_2004.jpg/300px-Tiesto_2004.jpg",
+      "id":1,
+      "ticketTypes":[  
+        {  
+          "price":"$13",
+          "title":"Weekend",
+          "amountRemaining":"50",
+          "startDate":"Friday 16/4/16",
+          "finishDate":"Monday 19/4/16",
+          "startTime":"14:00",
+          "finishTime":"1:00",
+          "description":"The whole weekend will have lots of different acts from Friday afternoon to Sunday night.",
+          "location":"The Cricket Pitch"
+        },
+        {  
+          "price":"$10",
+          "title":"Friday",
+          "amountRemaining":"50",
+          "startDate":"Friday 16/4/16",
+          "finishDate":"Saturday 17/4/16",
+          "startTime":"14:00",
+          "finishTime":"1:00",
+          "description":"The whole weekend will have lots of different acts from Friday afternoon to Sunday night.",
+          "location":"The Cricket Pitch"
+        },
+        {  
+          "price":"$5",
+          "title":"Saturday",
+          "amountRemaining":"50",
+          "startDate":"Saturday 17/4/16",
+          "finishDate":"Sunday 18/4/16",
+          "startTime":"14:00",
+          "finishTime":"1:00",
+          "description":"The whole weekend will have lots of different acts from Friday afternoon to Sunday night.",
+          "location":"The Cricket Pitch"
+        },
+        {  
+          "price":"$20",
+          "title":"Sunday",
+          "amountRemaining":"50",
+          "startDate":"Sunday 18/4/16",
+          "finishDate":"Monday 19/4/16",
+          "startTime":"14:00",
+          "finishTime":"1:00",
+          "description":"The whole weekend will have lots of different acts from Friday afternoon to Sunday night.",
+          "location":"The Cricket Pitch"
+        }
+      ]
+    },
+    {  
+      "time":"5:00PM - 8:00PM",
+      "squareImage":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Avicii_2014_003cr.jpg/260px-Avicii_2014_003cr.jpg",
+      "price":"$20 - 30",
+      "description":"A great event for sure!",
+      "title":"Avicii",
+      "location":"The O2",
+      "date":"2/01/17",
+      "coverImage":"https://upload.wikimedia.org/wikipedia/en/e/e4/Avicii_New_Logo.png",
+      "id":2
+    },
+    {  
+      "time":"5:00PM - 8:00PM",
+      "squareImage":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Justin_Bieber_Miami_Beach_Police_Department_March_04%2C_2014.jpg/220px-Justin_Bieber_Miami_Beach_Police_Department_March_04%2C_2014.jpg",
+      "price":"$20 - 30",
+      "description":"Expect a lot of Dabbing!",
+      "title":"Justin Bieber",
+      "location":"Wezz",
+      "date":"3/01/17",
+      "coverImage":"https://upload.wikimedia.org/wikipedia/en/thumb/b/b9/Myworld2.jpg/220px-Myworld2.jpg",
+      "id":3,
+      "ticketTypes":[  
+        {  
+          "price":"$50",
+          "title":"Standing",
+          "amountRemaining":"3",
+          "startDate":"Saturday 17/4/16",
+          "finishDate":"Saturday 17/4/16",
+          "startTime":"17:00",
+          "finishTime":"20:00",
+          "description":"Jump around and have a great time in the standing area.",
+          "location":"Wezz"
+        },
+        {  
+          "price":"$30",
+          "title":"Seated",
+          "amountRemaining":"39",
+          "startDate":"Saturday 17/4/16",
+          "finishDate":"Saturday 17/4/16",
+          "startTime":"17:00",
+          "finishTime":"20:00",
+          "description":"Seating tickets for the event",
+          "location":"Wezz"
+        }
+      ]
+    },
+    {  
+      "time":"5:00PM - 8:00PM",
+      "squareImage":"https://upload.wikimedia.org/wikipedia/commons/3/31/Max_Martin.jpg",
+      "price":"$20 - 30",
+      "description":"This event will be no use- dont go",
+      "title":"Ariana Grande",
+      "location":"Marley Park",
+      "date":"4/01/17",
+      "coverImage":"https://upload.wikimedia.org/wikipedia/en/thumb/d/da/Ariana_Grande_-_Last_Christmas_%28Official_Single_Cover%29.png/220px-Ariana_Grande_-_Last_Christmas_%28Official_Single_Cover%29.png",
+      "id":4,
+      "ticketTypes":[  
+        {  
+          "price":"$13",
+          "title":"Season Ticket",
+          "startDate":"Friday 16/4/16",
+          "finishDate":"Friday 16/4/17",
+          "startTime":"17:00",
+          "finishTime":"20:00",
+          "description":"Season tickets get you access to any of the Ariana Grande events throughout the season.",
+          "location":"Marley Park, The RDS"
+        },
+        {  
+          "price":"$10",
+          "title":"One day ticket",
+          "startDate":"null",
+          "finishDate":"null",
+          "startTime":"17:00",
+          "finishTime":"20:00",
+          "description":"A day ticket to one of the Ariana Grande events.",
+          "location":"Marley Park"
+        }
+      ]
+    },
+    {  
+      "time":"5:00PM - 8:00PM",
+      "squareImage":"https://upload.wikimedia.org/wikipedia/pt/6/63/50_Cent_-_P.I.M.P..jpg",
+      "price":"$20 - 30",
+      "description":"This will be the event of the hour no doubt",
+      "title":"Fifty Cent",
+      "location":"Outside the Pav",
+      "date":"5/01/17",
+      "coverImage":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Val_Kilmer_and_50_Cent.jpg/220px-Val_Kilmer_and_50_Cent.jpg",
+      "id":5,
+      "ticketTypes":[  
+        {  
+          "price":"$13",
+          "title":"Weekend",
+          "startDate":"Friday 16/4/16",
+          "finishDate":"Monday 19/4/16",
+          "startTime":"17:00",
+          "finishTime":"20:00",
+          "description":"The whole weekend will have lots of different acts from Friday afternoon to Sunday night.",
+          "location":"The Cricket Pitch"
+        }
+      ]
+    },
+    {  
+      "time":"5:00PM - 8:00PM",
+      "squareImage":"https://upload.wikimedia.org/wikipedia/commons/6/6a/Sebastian_Ingrosso_playing_live_at_Ushuaia_Ibiza.jpeg",
+      "price":"$20 - 30",
+      "description":"Note to self: come up with a description later",
+      "title":"Swedish House Mafia",
+      "location":"Pheonix Park",
+      "date":"6/01/17",
+      "coverImage":"https://upload.wikimedia.org/wikipedia/commons/3/32/Swedish_house_mafia_2.jpg",
+      "id":6,
+      "ticketTypes":[  
+        {  
+          "price":"$13",
+          "title":"Weekend",
+          "startDate":"Friday 16/4/16",
+          "finishDate":"Monday 19/4/16",
+          "startTime":"17:00",
+          "finishTime":"20:00",
+          "description":"The whole weekend will have lots of different acts from Friday afternoon to Sunday night.",
+          "location":"Pheonix Park"
+        }
+      ]
+    },
+    {  
+      "time":"5:00PM - 8:00PM",
+      "squareImage":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Xx_album_cover.svg/1200px-Xx_album_cover.svg.png",
+      "price":"$17.38",
+      "description":"The XX are playing in a big gig that you can see!",
+      "title":"The XX",
+      "location":"The 3 Arena",
+      "date":"7/01/17",
+      "coverImage":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/The_xx_Dec._2_09.jpg/200px-The_xx_Dec._2_09.jpg",
+      "id":7,
+      "ticketTypes":[  
+        {  
+          "price":"$13",
+          "title":"Weekend",
+          "startDate":"Friday 16/4/16",
+          "finishDate":"Monday 19/4/16",
+          "startTime":"17:00",
+          "finishTime":"20:00",
+          "description":"The whole weekend will have lots of different acts from Friday afternoon to Sunday night.",
+          "location":"The Cricket Pitch"
+        }
+      ]
+    },
+    {  
+      "time":"5:00PM - 8:00PM",
+      "squareImage":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Rupert_Grint_2012.jpg/1200px-Rupert_Grint_2012.jpg",
+      "price":"$20 - 30",
+      "description":"Another generic description",
+      "title":"Ed Sheeran",
+      "location":"Some place",
+      "date":"8/01/17",
+      "coverImage":"https://upload.wikimedia.org/wikipedia/fr/thumb/3/3d/EdSheeranLogo.png/220px-EdSheeranLogo.png",
+      "id":8,
+      "ticketTypes":[  
+        {  
+          "price":"$13",
+          "title":"Weekend",
+          "startDate":"Friday 16/4/16",
+          "finishDate":"Monday 19/4/16",
+          "startTime":"17:00",
+          "finishTime":"20:00",
+          "description":"The whole weekend will have lots of different acts from Friday afternoon to Sunday night.",
+          "location":"The Cricket Pitch"
+        }
+      ]
+    },
+    {  
+      "time":"5:00PM - 8:00PM",
+      "squareImage":"https://upload.wikimedia.org/wikipedia/commons/9/9b/Red_Hot_Chili_Peppers_2012-07-02_001.jpg",
+      "price":"$20 - 30",
+      "description":"blah blah blah",
+      "title":"Red Hot Chilli Peppers",
+      "location":"Croke Park",
+      "date":"9/01/17",
+      "coverImage":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Red_hot_chilli_peppers.jpg/1200px-Red_hot_chilli_peppers.jpg",
+      "id":9,
+      "ticketTypes":[  
+        {  
+          "price":"$13",
+          "title":"Weekend",
+          "startDate":"Friday 16/4/16",
+          "finishDate":"Monday 19/4/16",
+          "startTime":"17:00",
+          "finishTime":"20:00",
+          "description":"The whole weekend will have lots of different acts from Friday afternoon to Sunday night.",
+          "location":"The Cricket Pitch"
+        }
+      ]
+    },
+    {  
+      "time":"5:00PM - 8:00PM",
+      "squareImage":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Route_du_Rock_2007%2C_LCD_Soundsystem_2.jpg/250px-Route_du_Rock_2007%2C_LCD_Soundsystem_2.jpg",
+      "price":"$4000",
+      "description":"lorem ipsum .... lol",
+      "title":"LCD Soundsystem",
+      "location":"Croke Patrick",
+      "date":"11/01/17",
+      "coverImage":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/LCD_Soundsystem_-_Roskilde_Festival_2010.jpg/1200px-LCD_Soundsystem_-_Roskilde_Festival_2010.jpg",
+      "id":10,
+      "ticketTypes":[  
+        {  
+          "price":"$13",
+          "title":"Weekend",
+          "startDate":"Friday 16/4/16",
+          "finishDate":"Monday 19/4/16",
+          "startTime":"17:00",
+          "finishTime":"20:00",
+          "description":"The whole weekend will have lots of different acts from Friday afternoon to Sunday night.",
+          "location":"The Cricket Pitch"
+        }
+      ]
+    },
+    {  
+      "time":"5:00PM - 8:00PM",
+      "squareImage":"https://upload.wikimedia.org/wikipedia/en/a/a7/Random_Access_Memories.jpg",
+      "price":"$20 - 30",
+      "description":"here is the event description",
+      "title":"Daft Punk",
+      "location":"In the Pav",
+      "date":"12/01/17",
+      "coverImage":"https://upload.wikimedia.org/wikipedia/en/a/ae/Daft_Punk_-_Discovery.jpg",
+      "id":11,
+      "ticketTypes":[  
+        {  
+          "price":"$13",
+          "title":"Weekend",
+          "startDate":"Friday 16/4/16",
+          "finishDate":"Monday 19/4/16",
+          "startTime":"17:00",
+          "finishTime":"20:00",
+          "description":"The whole weekend will have lots of different acts from Friday afternoon to Sunday night.",
+          "location":"The Cricket Pitch"
+        }
+      ]
+    },
+    {  
+      "time":"5:00PM - 8:00PM",
+      "squareImage":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Deadmau5.png/220px-Deadmau5.png",
+      "price":"$20 - 30",
+      "description":"hello description",
+      "title":"Deadmau5",
+      "location":"Location12",
+      "date":"The RDS",
+      "coverImage":"https://upload.wikimedia.org/wikipedia/en/5/57/Mau5trap_logo.png",
+      "id":12,
+      "ticketTypes":[  
+        {  
+          "price":"$13",
+          "title":"Weekend",
+          "startDate":"Friday 16/4/16",
+          "finishDate":"Monday 19/4/16",
+          "startTime":"17:00",
+          "finishTime":"20:00",
+          "description":"The whole weekend will have lots of different acts from Friday afternoon to Sunday night.",
+          "location":"The Cricket Pitch"
+        }
+      ]
+    }
+  ]
+}
