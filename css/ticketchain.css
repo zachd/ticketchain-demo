@@ -11,6 +11,17 @@
   text-transform: uppercase;
   letter-spacing: 2px;
 }
+.name-group input.form-control {
+  display: inline !important;
+  width: 50% !important;
+}
+.email-group {
+  width: 100% !important;
+}
+.submit-group input {
+  border-radius: 3px !important;
+  margin-top: 10px;
+}
 html,
 body {
   height: 100%;
